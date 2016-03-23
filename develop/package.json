@@ -4,6 +4,8 @@
   "description": "Book Site Search",
   "main": "index.js",
   "scripts": {
+    "dev": "export VERSION=dev; gulp watch",
+    "prod": "export VERSION=prod; gulp watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
