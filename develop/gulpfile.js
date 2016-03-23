@@ -35,8 +35,7 @@ function getHTMLAssets(path) {
         },
         js: {
             src: [
-                "js/vendor/jwplayer.js",
-                'js/bundle.min.js'
+                //'js/bundle.min.js'
             ],
             tpl: '<script src="%s"></script>'
         }/*,
@@ -67,13 +66,39 @@ gulp.task('fileinclude', function () {
             prefix: '@@',
             basepath: '@file'
         }))
-        //.pipe(htmlreplace(assets))
+        .pipe(htmlreplace(assets))
         .pipe(gulp.dest(deploy))
         .pipe($.size())
         .pipe($.notify({
             message: ' fileinclude done'
         }))
         .pipe(gulpif(isDev(), $.livereload()));
+});
+
+
+gulp.task('sass', function () {
+    gulp.src([
+            app + settings.sass + '**/*.scss',
+            '!' + app + settings.sass_sprite + '**/*.scss'
+        ])
+        .pipe(gulpif(isDev(), $.sourcemaps.init()))
+        .pipe($.sass({
+            precision: 6,
+            outputStyle: 'compact'
+        }))
+        .on("error", $.notify.onError(function (error) {
+            return "Error: " + error.message;
+         }))
+        .pipe($.postcss([
+            require('autoprefixer')({browsers: ['ie >= 10', 'last 2 version']})
+        ]))
+        .pipe(gulpif(isDev(), $.sourcemaps.write()))
+        .pipe(gulp.dest(deploy + settings.css))
+        .pipe($.notify({
+            message: 'Sass done'
+        }))
+        .pipe($.size())
+        .pipe(gulpif(isDev(), $.livereload()))
 });
 
 
@@ -89,7 +114,7 @@ gulp.task('eslint', function() {
 
 gulp.task('clean', del.bind(null, [deploy + '*']));
 
-gulp.task('watch', ['fileinclude'], function (e) {
+gulp.task('watch', ['fileinclude', 'sass'], function (e) {
 
     $.livereload.listen();
     $.connect.server({
@@ -99,5 +124,6 @@ gulp.task('watch', ['fileinclude'], function (e) {
     });
 
     gulp.watch([app + settings.page_templates + '**/*.html'], ['fileinclude']);
+    gulp.watch([app + settings.sass + '**/*.scss'], ['sass']);
     //gulp.watch([app + settings.js + "**/*.js"], ['eslint']);
 });
