@@ -1,7 +1,8 @@
 module.exports = {
     "env": {
         "browser": true,
-        "commonjs": true
+        "commonjs": true,
+        "jquery": true
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -10,8 +11,7 @@ module.exports = {
             "function"
         ],
         "indent": [
-            2,
-            "tab"
+            2
         ],
         "linebreak-style": [
             2,
