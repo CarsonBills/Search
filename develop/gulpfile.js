@@ -35,7 +35,8 @@ function getHTMLAssets(path) {
         },
         js: {
             src: [
-                //'js/bundle.min.js'
+                'https://code.jquery.com/jquery-2.2.2.min.js',
+                'js/bundle.min.js'
             ],
             tpl: '<script src="%s"></script>'
         }/*,
@@ -102,8 +103,32 @@ gulp.task('sass', function () {
 });
 
 
+gulp.task('browserify', function () {
+    return gulp.src([
+            app + settings.js + 'app.js',
+            '!' + app + settings.vendor + '**/*.js'
+        ])
+        .pipe($.browserify({
+            transform: ['debowerify', hbsfy],
+            debug: isDev(),
+            paths: [
+                './node_modules/',
+                './' + app + settings.js,
+                './' + app + settings.templates
+            ]
+        }))
+        .pipe(gulpif(!isDev(), $.uglify()))
+        .pipe($.rename({basename: 'bundle', extname: '.min.js'}))
+        .pipe($.notify({
+            message: 'Browserify done'
+        }))
+        .pipe(gulp.dest(deploy + "js"))
+        .pipe($.livereload());
+});
+
+
 gulp.task('eslint', function() {
-	return gulp.src(settings.js + "**/*.js")
+	return gulp.src(app + settings.js + "**/*.js")
   		.pipe($.eslint({
   		}))
   		.pipe($.eslint.format());
@@ -112,9 +137,16 @@ gulp.task('eslint', function() {
 });
 
 
+gulp.task('copy_data', function () {
+    return gulp.src([
+            app + settings.json + '**/*.json'
+        ])
+        .pipe(gulp.dest(deploy + settings.json));
+});
+
 gulp.task('clean', del.bind(null, [deploy + '*']));
 
-gulp.task('watch', ['fileinclude', 'sass'], function (e) {
+gulp.task('watch', ['fileinclude', 'sass', 'browserify', 'copy_data'], function (e) {
 
     $.livereload.listen();
     $.connect.server({
@@ -125,5 +157,11 @@ gulp.task('watch', ['fileinclude', 'sass'], function (e) {
 
     gulp.watch([app + settings.page_templates + '**/*.html'], ['fileinclude']);
     gulp.watch([app + settings.sass + '**/*.scss'], ['sass']);
+    gulp.watch([app + settings.json + '**/*.json'], ['copy_data']);
     //gulp.watch([app + settings.js + "**/*.js"], ['eslint']);
+    gulp.watch([
+        app + settings.templates + '**/*',
+        app + settings.js + '**/*'
+
+    ], ['browserify']);
 });
