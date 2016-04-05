@@ -1,3 +1,5 @@
+/*eslint no-console: [2, { allow: ["log", "error"] }] */
+
 var helper = require('modules/ajax_helper'),
     Config = (function () {
         'use strict';
