@@ -1,0 +1,18 @@
+<h2 class="nav_heading"> Browse by Book Type </h2>
+<div class="filters_checkboxes">
+{{#each categories}}
+    <h3 data-id="{{@index}}" class="filter" style='color:white;'>
+        <input type="checkbox" data="{{this}}">  {{this}}
+        </input>
+    </h3>
+{{/each}}
+</div>
+<h2 class="nav_heading"> Format </h2>
+<div class="filters_checkboxes">
+    {{#each formats}}
+        <h3 data-id="{{@index}}" class="filter" style='color:white;'>
+            <input type="checkbox" data="{{this}}">  {{this}}
+            </input>
+        </h3>
+    {{/each}}
+</div>

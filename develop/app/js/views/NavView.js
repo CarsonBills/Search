@@ -16,6 +16,7 @@ var Config = require('modules/Config'),
             filterView = function(){
                 $el.find('h3').click(function (e) {
                     var target = $(e.currentTarget);
+                    console.log($(target).html())
                     contentToFilter.consoleTest($(target.html()));
                     return false;
                 });

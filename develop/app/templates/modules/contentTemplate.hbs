@@ -1,14 +1,21 @@
 {{#each content}}
 <div class="result">
 	<div class="image">
-		<img src="{{imgsrc}}">
+		<img data-id="{{@index}}" src="{{imgsrc}}">
 	</div>
-	<div class="description">
-		<h2>{{title}}</h2>
+	<div class="details">
+		<h2 class="title">{{title}}</h2>
 		<p>By: {{author}}</p>
 		<p>{{publishDate}}</p>
-		<p>Description: "{{{description}}}"
-		</p>
+		<div class="description">
+			<p>Description: {{description}}</p>
+			<div>
+				<b>Categories:</b>
+				{{#each categories}}
+					 -  {{this}}
+				{{/each}}
+			</div>
+		</div>
 	</div>
 </div>
 {{/each}}

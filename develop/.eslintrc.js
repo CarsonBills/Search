@@ -9,6 +9,9 @@ module.exports = {
         "strict": [
             2,
             "function"
+        ],        
+        "no-console": [
+            0
         ],
         "indent": [
             2

@@ -158,7 +158,7 @@ gulp.task('watch', ['fileinclude', 'sass', 'browserify', 'copy_data'], function 
     gulp.watch([app + settings.page_templates + '**/*.html'], ['fileinclude']);
     gulp.watch([app + settings.sass + '**/*.scss'], ['sass']);
     gulp.watch([app + settings.json + '**/*.json'], ['copy_data']);
-    //gulp.watch([app + settings.js + "**/*.js"], ['eslint']);
+    gulp.watch([app + settings.js + "**/*.js"], ['eslint']);
     gulp.watch([
         app + settings.templates + '**/*',
         app + settings.js + '**/*'
