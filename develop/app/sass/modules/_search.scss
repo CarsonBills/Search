@@ -1,6 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
+    font-family: Georgia, serif;
 }
 
 html, body {
@@ -8,8 +9,18 @@ html, body {
 	height:100%;
 }
 
+h3 {
+    font-size: 13px;
+    font-weight: normal;
+    color: grey;
+}
+
 p {
 	font-size: 14px;
+}
+
+a {
+    color: cornflowerblue;
 }
 
 
@@ -33,6 +44,15 @@ p {
 	vertical-align: top;
 	color: white;
 
+    .breadcrumbs {
+        display: none;
+        .breadcrumb {
+            border: 1px solid white;
+            padding: 0 10px;
+            margin: 5px 0;
+        }
+    }
+
     .nav_heading {
         color: cornflowerblue;
         font-size: 18px;
@@ -48,7 +68,6 @@ p {
             font-size: 100%;
             line-height: 20px;
             padding: 0 7px 0px 7px;
-            // background-color: lightgrey;
         }
         &.collapsed:after {
             content: "\002B";
@@ -58,6 +77,11 @@ p {
     .filters_checkboxes {
         padding: 0 0 0 10px;
         font-size: 15px;
+
+        .filter-text {
+            cursor: pointer;
+            display: inline-block;
+        }
     }
 }
 
@@ -97,7 +121,7 @@ p {
         }
         .sort_display:after {
             content: "\25bc";
-            color:darkgrey;
+            color: darkgrey;
             position: absolute;
             top: 0;
             right: 0;
@@ -125,12 +149,14 @@ p {
                 width:350px;
                 vertical-align: top;
                 display: inline-block;
+
+                .variants {
+                    margin-left: 40px;
+                }
             }
         }
     
     }
-
-
 }
 
 

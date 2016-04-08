@@ -4,36 +4,51 @@
 		"content" : [
 			{
 				"imgsrc": "//placehold.it/170x200",
-				"title": "Title Title Title Title Title Title Title Title Title Title Title",
-				"author": "John Doe",
-				"publishDate": "01/01/2000",
+				"title": "Title Title Title Title",
+				"subtitle": "Subtitle and such",
+				"author": ["John Doe"],
+				"readingLine": "Reading Line text",
+				"edition": "11th Edition",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "ebook", "hardcover", "paperback" ],
-				"categories" : ["History", "Business & Economics", "The Arts"]
+				"categories" : ["History", "Business & Economics", "The Arts"],
+				"variants" : ["Volume 1", "Volume 2", "Volume 3"],
+				"resources" : ["ancillary Items Available", "Textbook Only", "Reading Guides", "Publication Year"],
+				"pub_date" : ["Last 30 Days", "Last 60 Days", "Coming Soon"],
+				"edition_text" : ["11th Edition"],
+				"volumes" : ["Vol. 1", "Vol. 2", "Vol. 3"],
+				"contributor_name": [{"firstName": "John", "lastName": "Doe"}]
 			},
 			{
 				"imgsrc": "//placehold.it/170x200",
 				"title": "Test test test",
-				"author": "John Doe",
-				"publishDate": "01/01/2000",
+				"subtitle": "Subtitle and such",
+				"author": ["Jane Doe"],
+				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "paperback" ],
-				"categories" : ["Science and Technology", "Psychology & Self-Help", "Biography & Memoir"]
+				"categories" : ["Science and Technology", "Psychology & Self-Help", "Biography & Memoir"],
+				"edition_text" : ["2nd Edition"],
+				"contributor_name": [{"firstName": "Jane", "lastName": "Doe"}]
 			},
 			{
 				"imgsrc": "//placehold.it/170x200",
 				"title": "Another Title Here",
-				"author": "John Doe",
-				"publishDate": "01/01/2000",
+				"subtitle": "Subtitle and such",
+				"author": ["John Doe"],
+				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["hardcover", "paperback" ],
-				"categories" : ["Poetry", "Fiction & Essays", "Science and Technology"]
+				"categories" : ["Poetry", "Fiction & Essays", "Science and Technology"],
+				"edition_text" : ["4th Edition"],
+				"volumes" : ["Vol. 4", "Vol. 5"]
 			},
 			{
 				"imgsrc": "//placehold.it/170x200",
 				"title": "Yet another result",
-				"author": "John Doe",
-				"publishDate": "01/01/2000",
+				"subtitle": "Subtitle and such",
+				"author": ["John Doe"],
+				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["ebook", "hardcover", "paperback" ],
 				"categories" : ["Cooking, Food, and Drink", "History", "Poetry", "Business & Economics"]
@@ -41,8 +56,10 @@
 			{
 				"imgsrc": "//placehold.it/170x200",
 				"title": "Hmm Hmm Hmm",
-				"author": "John Doe",
-				"publishDate": "01/01/2000",
+				"subtitle": "Subtitle and such",
+				"author": ["John Doe"],
+				"Reading Line": "Reading Line text",
+				"Edition": "11th Edition",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "ebook", "paperback" ],
 				"categories" : ["History", "Mystery", "The Arts", "Fiction & Essays"]

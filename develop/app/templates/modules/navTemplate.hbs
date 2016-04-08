@@ -1,18 +1,94 @@
-<h2 class="nav_heading"> Browse by Book Type </h2>
-<div class="filters_checkboxes">
-{{#each categories}}
-    <h3 data-id="{{@index}}" class="filter" style='color:white;'>
-        <input type="checkbox" data="{{this}}">  {{this}}
-        </input>
-    </h3>
-{{/each}}
+<div class="breadcrumbs">
+<h2>You're looking in:</h2>
+
 </div>
-<h2 class="nav_heading"> Format </h2>
-<div class="filters_checkboxes">
-    {{#each formats}}
-        <h3 data-id="{{@index}}" class="filter" style='color:white;'>
-            <input type="checkbox" data="{{this}}">  {{this}}
-            </input>
-        </h3>
-    {{/each}}
+<div class="categories">
+    <h2 class="nav_heading"> Browse by Book Type </h2>
+    <div class="filters_checkboxes">
+        {{#each categories}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    {{this}}
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="formats">
+    <h2 class="nav_heading"> Format </h2>
+    <div class="filters_checkboxes">
+        {{#each formats}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="resources">
+    <h2 class="nav_heading"> Resources </h2>
+    <div class="filters_checkboxes">
+        {{#each resources}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="new_releases">
+    <h2 class="nav_heading"> New Releases </h2>
+    <div class="filters_checkboxes">
+        {{#each pub_date}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="edition">
+    <h2 class="nav_heading"> Edition </h2>
+    <div class="filters_checkboxes">
+        {{#each edition_text}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="volume">
+    <h2 class="nav_heading"> Volumes </h2>
+    <div class="filters_checkboxes">
+        {{#each volumes}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<div class="author">
+    <h2 class="nav_heading"> Author </h2>
+    <div class="filters_checkboxes">
+        {{#each contributor_name}}
+            <div class="filter">
+                <h3 data-id="{{@index}}" class="filter-text">
+                    <input type="checkbox" data="{{this}}">  {{this.lastName}}, {{this.firstName}}
+                    </input>
+                </h3>
+            </div>
+        {{/each}}
+    </div>
 </div>

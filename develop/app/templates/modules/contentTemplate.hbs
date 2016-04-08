@@ -4,17 +4,22 @@
 		<img data-id="{{@index}}" src="{{imgsrc}}">
 	</div>
 	<div class="details">
-		<h2 class="title">{{title}}</h2>
-		<p>By: {{author}}</p>
-		<p>{{publishDate}}</p>
+		<h2 class="title">{{title}}:{{subtitle}}</h2>
+		<p>{{readingLine}}</p>
+		<p>{{#each author}}<a href="#">{{this}}</a>{{/each}}</p>
+		<p>{{#if edition}}{{this}}{{/if}}</p>
 		<div class="description">
 			<p>Description: {{description}}</p>
+			{{#if variants}}
 			<div>
-				<b>Categories:</b>
-				{{#each categories}}
-					 -  {{this}}
+				<p>Pick your version:</p>
+				{{#each variants}}
+					<div class="variants">
+						<p><a href="#">{{this}}</a></p>
+					</div>
 				{{/each}}
 			</div>
+			{{/if}}
 		</div>
 	</div>
 </div>

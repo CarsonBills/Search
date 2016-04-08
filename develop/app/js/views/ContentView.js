@@ -32,7 +32,7 @@ var Config = require('modules/Config'),
             },
 
             consoleTest = function (target) {
-                render([target.attr('data')]);
+                render([target]);
             },
 
             applyFilters = function (context, filters){
