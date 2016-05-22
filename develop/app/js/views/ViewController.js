@@ -5,7 +5,7 @@ var ViewController = (function () {
     'use strict';
     var initialize = function () {
         ContentView.initialize({
-            el: '.results_content'
+            el: '.results'
         });
         NavView.initialize({
             el: '.filters_nav'

@@ -1,14 +1,15 @@
 var Config = require('modules/Config'),
+    searchHelper = require("modules/search_helper"),
     template = require('modules/contentTemplate.hbs'),
     ContentView = (function () {
         'use strict';
         var $el,
-            CONTEXT = 'content',
+            CONTEXT = 'records',
 
             initialize = function (options) {
                 $el = $(options.el);
                 render('');
-                initEvents();
+                xBreadcrumb();
             },
 
             truncateString = function(data, array){
@@ -23,48 +24,48 @@ var Config = require('modules/Config'),
                 }
             },
 
-            initEvents = function () {
-                $el.find('img').click(function (e) {
-                    var target = $(e.currentTarget);
-                    console.log(target.data('id'));
-                    return false;
-                });
+            showFiltered = function (target) {
+                render(target.records);
+                
             },
 
-            consoleTest = function (target) {
-                render([target]);
+            xBreadcrumb = function (data){
+                $("p.crumb_x").click(function (){
+                    render("reset")
+                    $('.search_container').trigger("clearBreadcrumbs")
+                    $(".breadcrumbs").hide();
+                })
             },
 
-            applyFilters = function (context, filters){
-                if (filters == ''){
-                    return context;
-                } else {
-                    var filteredResults = [];
-                    for (var i = 0; i < filters.length; i++){
-                        $(context).each(function(){
-                            for (var x = 0; x < this['categories'].length; x++){
-                                if (this['categories'][x] === filters[i]){
-                                    filteredResults.push(this);
-                                }
-                            }
-                        });
-                    }
-                    return filteredResults;
+            setRefinements = function(data) {
+                refinements = data;
+            },
+
+            applyFilters = function (context){
+                return context
+            },
+
+            render = function (context) {
+                console.log(context)
+                if (context === ''){
+                    context = Config.get(CONTEXT);
+                } else if (context === "reset"){
+                    context = Config.reset();
                 }
-            },
-
-            render = function (filters) {
-                var context = Config.get(CONTEXT);
-                truncateString(context, [['description', 160],['title', 45]]);
+                // truncateString(context, [['description', 160],['title', 45]]);
+                var breadcrumbs = $el.find(".breadcrumbs").html()
                 $el.empty();
                 $el.append(template({
-                    content: applyFilters(context, filters)
+                    content: context,
+                    breadcrumbs: breadcrumbs
                 }));
+                $el.find(".breadcrumbs").show()
+                xBreadcrumb();
             };
 
         return {
             initialize: initialize,
-            consoleTest: consoleTest
+            showFiltered: showFiltered,
         };
     }());
 

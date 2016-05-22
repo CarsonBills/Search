@@ -11,12 +11,12 @@
 				"edition": "11th Edition",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "ebook", "hardcover", "paperback" ],
-				"categories" : ["History", "Business & Economics", "The Arts"],
-				"variants" : ["Volume 1", "Volume 2", "Volume 3"],
-				"resources" : ["ancillary Items Available", "Textbook Only", "Reading Guides", "Publication Year"],
+				"categories" : ["History", "Business & Economics", "The Arts", "Poetry"],
+				"variants" : [{"title":"Volume 1", "price":"15.99"}, {"title":"Volume 2", "price": "17.99"}, {"title":"Volume 3", "price": "19.99"}],
+				"resources" : ["Ancillary Items Available", "Textbook Only", "Reading Guides"],
 				"pub_date" : ["Last 30 Days", "Last 60 Days", "Coming Soon"],
 				"edition_text" : ["11th Edition"],
-				"volumes" : ["Vol. 1", "Vol. 2", "Vol. 3"],
+				"price" : "$10.99",
 				"contributor_name": [{"firstName": "John", "lastName": "Doe"}]
 			},
 			{
@@ -27,7 +27,8 @@
 				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "paperback" ],
-				"categories" : ["Science and Technology", "Psychology & Self-Help", "Biography & Memoir"],
+				"price" : "$19.99",
+				"categories" : ["Science and Technology", "Psychology & Self-Help", "History", "Biography & Memoir"],
 				"edition_text" : ["2nd Edition"],
 				"contributor_name": [{"firstName": "Jane", "lastName": "Doe"}]
 			},
@@ -39,9 +40,9 @@
 				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["hardcover", "paperback" ],
-				"categories" : ["Poetry", "Fiction & Essays", "Science and Technology"],
+				"categories" : ["Poetry", "Fiction & Essays", "History", "Science and Technology"],
 				"edition_text" : ["4th Edition"],
-				"volumes" : ["Vol. 4", "Vol. 5"]
+				"variants" : [{"title":"Volume 4", "price":"22.99"}, {"title":"Volume 5", "price": "26.99"}]
 			},
 			{
 				"imgsrc": "//placehold.it/170x200",
@@ -51,6 +52,7 @@
 				"Reading Line": "Reading Line text",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["ebook", "hardcover", "paperback" ],
+				"price" : "$1.99",
 				"categories" : ["Cooking, Food, and Drink", "History", "Poetry", "Business & Economics"]
 			},
 			{
@@ -62,6 +64,7 @@
 				"Edition": "11th Edition",
 				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 				"formats": ["audio book", "ebook", "paperback" ],
+				"price" : "$99.99",
 				"categories" : ["History", "Mystery", "The Arts", "Fiction & Essays"]
 			}
 		]

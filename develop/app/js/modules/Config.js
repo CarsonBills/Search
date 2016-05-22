@@ -19,11 +19,16 @@ var helper = require('modules/ajax_helper'),
                 return deferred.promise();
             },
 
+            reset = function () {
+                return Data['records']
+            },
+
             echo = function (prop) {
                 console.log(Data[prop]);
             },
 
             get = function (prop) {
+                console.log("GET", Data)
                 return Data[prop];
             },
 
@@ -37,6 +42,7 @@ var helper = require('modules/ajax_helper'),
             get: get,
             set: set,
             echo: echo,
+            reset: reset,
             setup: setup
         };
     }());

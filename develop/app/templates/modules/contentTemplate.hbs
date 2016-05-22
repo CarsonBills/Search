@@ -1,26 +1,60 @@
-{{#each content}}
-<div class="result">
-	<div class="image">
-		<img data-id="{{@index}}" src="{{imgsrc}}">
-	</div>
-	<div class="details">
-		<h2 class="title">{{title}}:{{subtitle}}</h2>
-		<p>{{readingLine}}</p>
-		<p>{{#each author}}<a href="#">{{this}}</a>{{/each}}</p>
-		<p>{{#if edition}}{{this}}{{/if}}</p>
-		<div class="description">
-			<p>Description: {{description}}</p>
-			{{#if variants}}
-			<div>
-				<p>Pick your version:</p>
-				{{#each variants}}
-					<div class="variants">
-						<p><a href="#">{{this}}</a></p>
-					</div>
-				{{/each}}
-			</div>
-			{{/if}}
-		</div>
-	</div>
+<div class="meta_results">
+    <div class="number_results">
+        <p>Showing all {{content.length}} results</p>
+    </div>
+    <div class="show_more">
+		<p>SHOW MORE</p>
+    </div>
+    <div class="sort_display">
+        <select name="sort" class="sort_select">
+            <option value="relevance">Relevance</option>
+            <option value="lowest">By Lowest Price</option>
+            <option value="popularity">Popularity</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="author">Author</option>
+            <option value="title">Title</option>
+        </select>
+    </div>
+    <div class="breadcrumbs">{{#if breadcrumbs}}{{{breadcrumbs}}}{{/if}}</div>
+</div> 
+<div class="advertisement_banner">
 </div>
-{{/each}}
+<div class="results_content">
+	{{#each content}}
+		<div class="result">
+			<div class="image">
+				{{#if allMeta.cover_image}}
+					<img data-id="{{@index}}" src="{{allMeta.cover_image}}">
+				{{else}}
+					<div class="no_cover"><p>No Image<br>Available</p></div>
+				{{/if}}
+			</div>
+			<div class="details">
+				<div class="top">
+					<div class="title">
+						<h2 class="title_text">{{{_t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
+					</div>
+					{{#if allMeta.edition_text}}
+						<div class="edition">
+							<p>{{allMeta.edition_text}}</p>
+						</div>
+					{{/if}}
+				</div>
+				<div class='authors'>
+					<p>{{#each allMeta.authors}}<a href="#">{{this.authname}}</a>&nbsp{{/each}}</p>
+				</div>
+				<div class="description">
+					<p>{{{allMeta.summary_text}}}</p>
+				</div>
+				<div class="price">
+					{{#if allMeta.us_list_price}}
+						<p>{{allMeta.variants.length}} option for ${{allMeta.us_list_price}}</p>
+					{{else}}
+						<p># options starting from ${{allMeta.us_list_price}}</p>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	{{/each}}
+</div>
