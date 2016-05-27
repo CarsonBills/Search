@@ -6,8 +6,21 @@ var ajaxHelper = (function () {
             $.ajax({
                 dataType: 'json',
                 url: url,
+                method: 'POST',
+                data: {
+                    'query': "America",
+                    'fields': ['*'],
+                    'sort': {
+                    'field': 'title',
+                    'order': 'Ascending'
+                    },
+                    'pruneRefinements': false,
+                    'skip': 0,
+                    'pageSize': 25
+                    },
                 success: function (response) {
                     if (response) {
+                        console.log("FIRST RESPONSE", response)
                         deferred.resolve(response);
                     }
                 },

@@ -144,6 +144,18 @@ gulp.task('copy_data', function () {
         .pipe(gulp.dest(deploy + settings.json));
 });
 
+gulp.task('build', function () {
+    return gulp.src('')
+        .pipe($.shell([
+            'gulp copy_data',
+            'gulp browserify',
+            'gulp fileinclude',
+            'gulp sass'
+        ], {
+            maxBuffer: 4000
+        }));
+});
+
 gulp.task('clean', del.bind(null, [deploy + '*']));
 
 gulp.task('watch', ['fileinclude', 'sass', 'browserify', 'copy_data'], function (e) {

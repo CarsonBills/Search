@@ -1,15 +1,16 @@
 var Config = require('modules/Config'),
     searchHelper = require("modules/search_helper"),
     template = require('modules/contentTemplate.hbs'),
+    Handlebars = require('handlebars'),
     ContentView = (function () {
         'use strict';
         var $el,
+            COUNT = 'totalRecordCount',
             CONTEXT = 'records',
 
             initialize = function (options) {
                 $el = $(options.el);
                 render('');
-                xBreadcrumb();
             },
 
             truncateString = function(data, array){
@@ -25,20 +26,32 @@ var Config = require('modules/Config'),
             },
 
             showFiltered = function (target) {
-                render(target.records);
-                
-            },
-
-            xBreadcrumb = function (data){
-                $("p.crumb_x").click(function (){
-                    render("reset")
-                    $('.search_container').trigger("clearBreadcrumbs")
-                    $(".breadcrumbs").hide();
-                })
+                render(target);
             },
 
             setRefinements = function(data) {
                 refinements = data;
+            },
+
+            enlargeImage = function(data){
+                for (var e = 0; e < data.length; e++){
+                    if(data[e]["allMeta"]["cover_image"]){
+                        var url = data[e]['allMeta']['cover_image']
+                        if (url.slice(-6, -4) === "72"){
+                            url = url.slice(0, -6)+"198.jpg"
+                            data[e]['allMeta']['cover_image'] = url;
+                        }
+                    }
+                }
+                return data
+            },
+
+            gettotalCount = function(context){
+                if(context.records.length !== context.totalRecordCount){
+                    return context.totalRecordCount;
+                } else {
+                    return "";
+                }
             },
 
             applyFilters = function (context){
@@ -46,9 +59,8 @@ var Config = require('modules/Config'),
             },
 
             render = function (context) {
-                console.log(context)
                 if (context === ''){
-                    context = Config.get(CONTEXT);
+                    context = Config.get();
                 } else if (context === "reset"){
                     context = Config.reset();
                 }
@@ -56,11 +68,11 @@ var Config = require('modules/Config'),
                 var breadcrumbs = $el.find(".breadcrumbs").html()
                 $el.empty();
                 $el.append(template({
-                    content: context,
+                    content: enlargeImage(context.records),
+                    totalCount: gettotalCount(context),
                     breadcrumbs: breadcrumbs
                 }));
                 $el.find(".breadcrumbs").show()
-                xBreadcrumb();
             };
 
         return {

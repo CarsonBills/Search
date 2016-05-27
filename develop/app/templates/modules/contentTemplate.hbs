@@ -1,10 +1,16 @@
 <div class="meta_results">
     <div class="number_results">
-        <p>Showing all {{content.length}} results</p>
+        {{#if totalCount}}
+            <p>Showing <span class="current_results">{{content.length}}</span> of {{totalCount}} results</p>
+        {{else}}
+            <p>Showing all <span class="current_results">{{content.length}}</span> results</p>
+        {{/if}}
     </div>
-    <div class="show_more">
-		<p>SHOW MORE</p>
-    </div>
+    {{#if totalCount}}
+        <div class="show_more">SHOW MORE</div>
+    {{else}}
+        <div class="show_more_disabled">SHOW MORE</div>
+    {{/if}}
     <div class="sort_display">
         <select name="sort" class="sort_select">
             <option value="relevance">Relevance</option>
@@ -18,8 +24,7 @@
     </div>
     <div class="breadcrumbs">{{#if breadcrumbs}}{{{breadcrumbs}}}{{/if}}</div>
 </div> 
-<div class="advertisement_banner">
-</div>
+<div class="advertisement_banner"></div>
 <div class="results_content">
 	{{#each content}}
 		<div class="result">
@@ -35,15 +40,17 @@
 					<div class="title">
 						<h2 class="title_text">{{{_t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
 					</div>
-					{{#if allMeta.edition_text}}
+					{{#if_eq allMeta.edition_text 'n/a'}}
 						<div class="edition">
 							<p>{{allMeta.edition_text}}</p>
 						</div>
-					{{/if}}
+					{{/if_eq}}
 				</div>
-				<div class='authors'>
-					<p>{{#each allMeta.authors}}<a href="#">{{this.authname}}</a>&nbsp{{/each}}</p>
-				</div>
+                {{#if allMeta.authors}}
+    				<div class='authors'>
+    					<p>{{allMeta.authors.0.contributor_name}}</p>
+    				</div>
+                {{/if}}
 				<div class="description">
 					<p>{{{allMeta.summary_text}}}</p>
 				</div>

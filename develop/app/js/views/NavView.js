@@ -1,4 +1,5 @@
 var Config = require('modules/Config'),
+    refinements,
     contentToFilter = require('views/ContentView.js'),
     searchHelper = require("modules/search_helper"),
     template = require('modules/navTemplate.hbs'),
@@ -11,57 +12,101 @@ var Config = require('modules/Config'),
             initialize = function (options) {
                 $el = $(options.el);
                 initrender();
-                filterView();
                 collapseCategory();
                 filterCheckBox();
-                populateSubCategories();
+                setupNav();
                 configureNavDisplay();
                 resetNav();
+                moreRecords();
             },
 
             updatePage = function(data){
-                populateSubCategories(data["selectedNavigation"]);
-                filterView();
+                resetNav();
                 configureNavDisplay();
                 collapseCategory();
-                filterCheckBox();
-                resetNav();
+                moreRefinements(data["selectedNavigation"]);
+                moreRecords(data["selectedNavigation"]);
             },
 
-            filterView = function(){
+            setupNav = function(data){
+                refinements = data;
                 $el.find('h3.category-text').click(function (e) {
-                    var target = $(e.currentTarget);
-                    window.location.hash += target.context.innerText.replace(/ /g, '%20');
-                        var data = Config.get(CONTEXT);
-                        for (var i = 0; i < data.length; i ++){
-                            if (data[i]['displayName'] === target.context.innerText) {
-                                populateSubCategories(data[i]['refinements']);
-                            }
+                    populateSubCategories(e);
+                })
+            },
+
+            populateSubCategories = function(e){
+                console.log("populateSubCategories Begin", e)
+                var domRefinements = searchHelper.domRefinements(e)
+                $.ajax({
+                    url: '//dev2-services.wwnorton.com/search/search.php',
+                    method: 'POST',
+                    data: {
+                        'collection': 'dummyDevelopment',
+                        'area': 'dummyDevelopment',
+                        'query': 'America',
+                        'fields': ['*'],
+                        'sort': {
+                        'field': 'title',
+                        'order': 'Ascending'
+                        },
+                        'refinements': domRefinements,
+                        'pruneRefinements': false,
+                        'skip': 0,
+                        'pageSize': 25
+                        },
+                    success: function(data){
+
+                        if ($(e.currentTarget).closest(".filters_checkboxes").siblings(".category_level").text().includes("categories") || $(e.currentTarget).parent().hasClass("breadcrumb")){
+                            //update Nav
+                            rerenderNav(JSON.parse(data).data)
+                        }  else {
+                            rerenderFilter(JSON.parse(data).data)
                         }
-                        if ($('.breadcrumbs').text() === ""){
-                            $('.breadcrumbs').append('<div class="breadcrumb"><h2>' + target.context.innerText + '</h2>&nbsp<p class="crumb_x">x</p><p class="crumb">></p></div>').show();
-                        } else {
-                            $(".crumb_x").hide();
-                            $(".crumb").css("display", "inline-block");
-                            $('.breadcrumbs').append('<div class="breadcrumb">&nbsp<h2>' + target.context.innerText + '</h2>&nbsp<p class="crumb">></p></div>').show();
-                            
-                        }
-                    return false;
+                        // update Content                 
+                        contentToFilter.showFiltered(JSON.parse(data).data);
+                        buildBreadcrumb(domRefinements)
+                        moreRecords(JSON.parse(data).data);
+                    }
                 });
+                console.log("populateSubCategories END", e)
             },
 
-            populateSubCategories = function(data){
-            
-                $el.find('h3.category-text').click(function (e) {
+            moreRefinements = function(data){
+                $el.find(".nav_show_more").click(function(e){
+                    console.log("EXAMPLE", data, e)
                     refinements = searchHelper.getRefinements(data, e)
+                    $.ajax({
+                        url: '//dev2-services.wwnorton.com/search/search.php?more_ref=1',
+                        method: 'POST',
+                        data: {
+                            'collection': 'dummyDevelopment',
+                            'area': 'dummyDevelopment',
+                            'navigationName': $(e.currentTarget).parent().siblings(".category_level").text(),
+                            'query': 'America',
+                            'refinements': refinements,
+                            },
+                        success: function(data){
+                            rerenderNav(JSON.parse(data).data)
+                        }
+                    });
+                })
+            },
+
+            moreRecords = function(data){
+                $(".show_more").click(function(e){
+                    if (data && data.selectedNavigation && data.records){
+                        refinements = searchHelper.getRefinements(data.selectedNavigation, e)
+                    } else {
+                        refinements = "";
+                    }
                     $.ajax({
                         url: '//dev2-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'clientKey': '8fd00c47-8378-455c-a1bc-e4f1f1704b87',
                             'collection': 'dummyDevelopment',
                             'area': 'dummyDevelopment',
-                            'query': '',
+                            'query': 'America',
                             'fields': ['*'],
                             'sort': {
                             'field': 'title',
@@ -70,36 +115,79 @@ var Config = require('modules/Config'),
                             'refinements': refinements,
                             'pruneRefinements': false,
                             'skip': 0,
-                            'pageSize': 10
+                            'pageSize': parseInt($(".current_results").text()) + 25
                             },
                         success: function(data){
 
                             if ($(e.currentTarget).closest(".filters_checkboxes").siblings(".category_level").text().includes("categories") || $(e.currentTarget).parent().hasClass("breadcrumb")){
                                 //update Nav
-                                rerender(JSON.parse(data).data)
-                            }  
+                                rerenderNav(JSON.parse(data).data)
+                            } 
                             // update Content                   
                             contentToFilter.showFiltered(JSON.parse(data).data);
-                            clickBreadcrumb(refinements)
+                            buildBreadcrumb(refinements)
+                            moreRecords(JSON.parse(data).data);
                         }
                     });
-                })
+                });    
             },
 
-            clickBreadcrumb = function (refinements){
-                $(".breadcrumb h2").click(function(e){
-                    var index;
-                    refinements = JSON.parse(refinements);
-                    for (var f = 0; f < refinements.length; f++){
-                        console.log(refinements[f]['value'] === $(e.currentTarget).text())
-                        if (refinements[f]['value'] === $(e.currentTarget).text()){
-                            console.log(":)")
-                            index = f + 1;
+            buildBreadcrumb = function (refinements){
+                $('.breadcrumbs').empty()
+                refinements = JSON.parse(refinements)
+                console.log("buildBreadcrumb BEGIN", refinements)
+                    var breadcrumbs = [];
+                    for (var g = 0; g < refinements.length; g++){                
+                        breadcrumbs.push({'name': refinements[g]['navigationName'], 'value' : refinements[g]['value']})
+                    }
+                    console.log(breadcrumbs)
+                    for (var h = 0; h < breadcrumbs.length; h++){
+                        $('.breadcrumbs').append('<div name='+breadcrumbs[h].name+" class='breadcrumb'>&nbsp<h2>" + breadcrumbs[h].value + "</h2>&nbsp<p class='crumb_x'>x</p><p class='crumb'>></p></div>"); 
+                    }
+
+                configureBreadcrumbs();
+                xBreadcrumb();
+                console.log("buildBreadcrumb END", refinements)
+                clickBreadcrumb();
+            },
+
+            xBreadcrumb = function (data){
+                $('p.crumb_x').click(function (){
+                    $('.search_container').trigger('clearBreadcrumbs')
+                    $('.breadcrumbs').empty();
+                })
+            },
+            
+            clickBreadcrumb = function(data){
+                $('.breadcrumb h2').click(function (e){
+                    var totalCrumbs = $('.breadcrumb')
+                    console.log(":)", length, $(totalCrumbs[0]).find('h2').text())
+                    for (var b = 0; b < totalCrumbs.length; b++){
+                        // console.log($(this).find('h2').text())
+                        if ($(totalCrumbs[b]).find('h2').text() === $(e.currentTarget).text()){
+                            var newCrumbs = $('.breadcrumb').splice(0, b+1)
+                            $('.breadcrumbs').empty().append(newCrumbs);
                         }
                     }
-                    refinements.splice(index, refinements.length)
-                    populateSubCategories(refinements)
+                    configureBreadcrumbs();
+                    populateSubCategories(e);
                 })
+
+                    // Get All refinements from click and breadcrumbs
+                    // Run ajax call to get new results 
+                    // Delete breadcrumbs after the click
+                    // 
+            },
+
+            configureBreadcrumbs = function(){
+                if ($('.breadcrumb').length > 1){
+                    $(".crumb_x").hide();
+                    $(".crumb").css("display", "inline-block");
+                    $('.breadcrumb').last().find(".crumb").hide();
+                } else {
+                    $('.breadcrumb').last().find(".crumb").hide();
+                    $(".crumb_x").show();
+                }
             },
 
             configureNavDisplay = function(){
@@ -119,7 +207,6 @@ var Config = require('modules/Config'),
 
             collapseCategory = function(){
                 $el.find('.chevron').click(function (e) {
-
                     //hide content on click
                     $(e.currentTarget).siblings('.filters_checkboxes').toggleClass("collapsed").slideToggle("fast");       
                     //change chevron
@@ -163,9 +250,14 @@ var Config = require('modules/Config'),
 
             resetNav = function(){
                 $('.search_container').on("clearBreadcrumbs", function(){
-                    
-                    initrender();
+                    contentToFilter.initialize({
+                         el: '.results'
+                    });
+                    initialize({
+                        el: '.filters_nav'
+                    })
                 })
+                return false
             },
 
             reFilter = function(data){
@@ -209,22 +301,43 @@ var Config = require('modules/Config'),
                 return resources
             },
 
-            rerender = function(data){
-                if ($(".category_level").text() !== data.availableNavigation[0]['name'] && data.availableNavigation[0]['name'] !== "categories.categories.value"){
-                    $el.empty().append(template({
-                        categories: data.availableNavigation[0],
-                        filters: reFilter(data.availableNavigation),
-                        resources: getResources(data.availableNavigation)
-                    }));
-                } else {
-                    $el.empty().append(template({
-                        categories: "",
-                        filters: reFilter(data.availableNavigation)
-                    }));
-                    $('.categories').empty();
-                }
+            rerenderFilter = function(data){
+                $el.empty().append(template({
+                    categories: data.availableNavigation[0],
+                    filters: reFilter(data.availableNavigation),
+                    resources: getResources(data.availableNavigation)
+                }));
+                setupNav(data["selectedNavigation"]);
+                configureNavDisplay();
+            },
 
+            rerenderNav = function(data){
+                // SEARCH FOR DOM ELEMENT BY 'name' property and update that
+                if (data.navigation){
+                    $('.filter_group').each(function(){
+                        if ($(this).find('.category_level').text() === data.navigation.name){
+                            $(this).empty().append(template({
+                                'categories': data.navigation
+                            }));
+                        }
+                    })
+                } else {
+                    if (data.availableNavigation[0]['name'] !== "categories.categories.value"){
+                        $('.filters_nav').empty().append(template({
+                            categories: data.availableNavigation[0],
+                            filters: reFilter(data.availableNavigation),
+                            resources: getResources(data.availableNavigation)
+                        }));
+                    } else {
+                        $('.filters_nav').empty().append(template({
+                            categories: data.availableNavigation[0],
+                            filters: reFilter(data.availableNavigation)
+                        }));
+                    }
+                }
                 updatePage(data);
+                console.log("TESTTESTTEST", data['selectedNavigation'])
+                setupNav(data["selectedNavigation"]);
             },
 
             initrender = function () {

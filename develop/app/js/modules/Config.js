@@ -20,7 +20,7 @@ var helper = require('modules/ajax_helper'),
             },
 
             reset = function () {
-                return Data['records']
+                return Data
             },
 
             echo = function (prop) {
@@ -28,8 +28,11 @@ var helper = require('modules/ajax_helper'),
             },
 
             get = function (prop) {
-                console.log("GET", Data)
-                return Data[prop];
+                if (prop){
+                    return Data[prop];
+                } else {
+                    return Data
+                }
             },
 
             set = function (prop, value) {

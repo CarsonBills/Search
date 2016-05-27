@@ -15,11 +15,14 @@
                 {{/if}}
             </div>
         {{/each}}
+    {{#if categories.moreRefinements}}
+        <div class="nav_show_more">SHOW MORE</div>
+    {{/if}}
     </div>
 </div>
 
 {{#each filters}}
-    <div class="filters {{this.name}}">
+    <div class="filters filter_group {{this.name}}">
         <h2 class="nav_heading">{{this.metadata.0.value}}</h2>
         <span class="chevron"><i class="fa fa-chevron-down" aria-hidden="true"></i>
         <i class="fa fa-chevron-right" aria-hidden="true"></i></span>
@@ -36,12 +39,15 @@
                 {{/if}}
             </div>
         {{/each}}
+        {{#if this.moreRefinements}}
+            <div class="nav_show_more">SHOW MORE</div>
+        {{/if}}
         </div>
     </div>
 {{/each}}
 
 {{#each resources}}
-    <div class="resources {{this.name}}">
+    <div class="resources filter_group {{this.name}}">
         <h2 class="nav_heading">{{this.metadata.0.value}}</h2>
         <span class="chevron"><i class="fa fa-chevron-down" aria-hidden="true"></i>
         <i class="fa fa-chevron-right" aria-hidden="true"></i></span>

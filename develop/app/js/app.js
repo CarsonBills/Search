@@ -1,4 +1,5 @@
 var Config = require('modules/Config'),
+    Handlebars = require('handlebars'),
     ViewController = require('views/ViewController');
 $(function () {
     'use strict';
