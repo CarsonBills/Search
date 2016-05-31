@@ -74,6 +74,10 @@ var searchHelper = (function () {
             return refinements
         },
 
+        getQuery = function(){
+            return window.location.href.slice(window.location.href.indexOf('?') + 1).split("=")[1]
+        },
+
         domRefinements = function(e){
 console.log("CLICK EVENT", e)
             var refinements = $('.breadcrumb')
@@ -114,6 +118,7 @@ console.log("CLICK EVENT", e)
     return {
         getRefinements: getRefinements,
         domRefinements: domRefinements,
+        getQuery: getQuery,
     };
 }());
 

@@ -14,6 +14,7 @@ var Config = require('modules/Config'),
                 initrender();
                 collapseCategory();
                 filterCheckBox();
+                clickCheckBox();
                 setupNav();
                 configureNavDisplay();
                 resetNav();
@@ -37,14 +38,15 @@ var Config = require('modules/Config'),
 
             populateSubCategories = function(e){
                 console.log("populateSubCategories Begin", e)
-                var domRefinements = searchHelper.domRefinements(e)
+                var domRefinements = searchHelper.domRefinements(e);
+                var searchQuery = searchHelper.getQuery();
                 $.ajax({
                     url: '//dev2-services.wwnorton.com/search/search.php',
                     method: 'POST',
                     data: {
                         'collection': 'dummyDevelopment',
                         'area': 'dummyDevelopment',
-                        'query': 'America',
+                        'query': searchQuery,
                         'fields': ['*'],
                         'sort': {
                         'field': 'title',
@@ -67,6 +69,8 @@ var Config = require('modules/Config'),
                         contentToFilter.showFiltered(JSON.parse(data).data);
                         buildBreadcrumb(domRefinements)
                         moreRecords(JSON.parse(data).data);
+                        checkboxState(domRefinements);
+                        clickCheckBox();
                     }
                 });
                 console.log("populateSubCategories END", e)
@@ -75,7 +79,8 @@ var Config = require('modules/Config'),
             moreRefinements = function(data){
                 $el.find(".nav_show_more").click(function(e){
                     console.log("EXAMPLE", data, e)
-                    refinements = searchHelper.getRefinements(data, e)
+                    refinements = searchHelper.domRefinements(data, e);
+                    var searchQuery = searchHelper.getQuery();
                     $.ajax({
                         url: '//dev2-services.wwnorton.com/search/search.php?more_ref=1',
                         method: 'POST',
@@ -83,7 +88,7 @@ var Config = require('modules/Config'),
                             'collection': 'dummyDevelopment',
                             'area': 'dummyDevelopment',
                             'navigationName': $(e.currentTarget).parent().siblings(".category_level").text(),
-                            'query': 'America',
+                            'query': searchQuery,
                             'refinements': refinements,
                             },
                         success: function(data){
@@ -96,17 +101,18 @@ var Config = require('modules/Config'),
             moreRecords = function(data){
                 $(".show_more").click(function(e){
                     if (data && data.selectedNavigation && data.records){
-                        refinements = searchHelper.getRefinements(data.selectedNavigation, e)
+                        refinements = searchHelper.domRefinements(data.selectedNavigation, e)
                     } else {
                         refinements = "";
                     }
+                    var searchQuery = searchHelper.getQuery();
                     $.ajax({
                         url: '//dev2-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
                             'collection': 'dummyDevelopment',
                             'area': 'dummyDevelopment',
-                            'query': 'America',
+                            'query': searchQuery,
                             'fields': ['*'],
                             'sort': {
                             'field': 'title',
@@ -245,6 +251,25 @@ var Config = require('modules/Config'),
                 $el.find(".filter-text").click(function(e){
                     var gah = $(e.currentTarget).parent().find("input.filter-checkbox");
                     gah.prop("checked", !gah[0].checked)
+                })
+            },
+
+            checkboxState = function(data){
+                var refinements = JSON.parse(data)
+                for (var t = 0; t < refinements.length; t++){
+                    $('.category-text').each(function(){
+                        if ($(this).text() === refinements[t].value){
+                            $(this).parent().find('.filter-checkbox').prop('checked', true);
+                        }
+                    })
+                }
+
+            },
+
+            clickCheckBox = function(){
+                $el.find(".filter-checkbox").click(function(e){
+                    console.log($(e.currentTarget).closest('.filter').find('h3.category-text').trigger('click'));
+                    // $(e.currentTarget).parent().find("input.filter-checkbox").trigger('click');
                 })
             },
 

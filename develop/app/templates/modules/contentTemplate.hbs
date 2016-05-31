@@ -38,13 +38,14 @@
 			<div class="details">
 				<div class="top">
 					<div class="title">
-						<h2 class="title_text">{{{_t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
+						<h2 class="title_text">{{{HBupperCase _t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
+                        
 					</div>
-					{{#if_eq allMeta.edition_text 'n/a'}}
+					{{#if allMeta.edition_text}}
 						<div class="edition">
-							<p>{{allMeta.edition_text}}</p>
+							<p>{{ allMeta.edition_text}}</p>
 						</div>
-					{{/if_eq}}
+					{{/if}}
 				</div>
                 {{#if allMeta.authors}}
     				<div class='authors'>

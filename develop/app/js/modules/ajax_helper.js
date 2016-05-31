@@ -1,14 +1,15 @@
-var ajaxHelper = (function () {
+var searchHelper = require("modules/search_helper"),
+    ajaxHelper = (function () {
     'use strict';
     var deferred = $.Deferred(),
-
+        searchQuery = searchHelper.getQuery(),
         load = function (url) {
             $.ajax({
                 dataType: 'json',
                 url: url,
                 method: 'POST',
                 data: {
-                    'query': "America",
+                    'query': searchQuery,
                     'fields': ['*'],
                     'sort': {
                     'field': 'title',
