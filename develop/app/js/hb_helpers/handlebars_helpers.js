@@ -1,5 +1,4 @@
-var Handlebars = require('handlebars/runtime'),
-    _ = require('underscore');
+var Handlebars = require('handlebars/runtime');
 
 module.exports = (function() {
     'use strict';
@@ -13,6 +12,12 @@ module.exports = (function() {
                 return word.charAt(0).toUpperCase() + word.substr(1);
             });
         }
+    });
+    Handlebars.registerHelper('if_eq', function(a, b, opts) {
+        if(a == b)
+            return opts.fn(this);
+        else
+            return opts.inverse(this);
     });  
 
 })();

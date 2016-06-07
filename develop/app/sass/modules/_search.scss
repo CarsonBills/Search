@@ -9,6 +9,18 @@ html, body {
 	height:100%;
 }
 
+#ctl00_pnlSearch{
+    position: relative;
+}
+
+.clear_search {
+    position: absolute;
+    right: 73px;
+    top: 3px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
 h3 {
     font-size: 13px;
     font-weight: normal;
@@ -36,8 +48,8 @@ p {
 	height: 100%;
 	min-height: 100% ;
     padding: 10px 10px 0px 20px;
-    padding-bottom: 9999px;
-    margin-bottom: -9999px;
+    padding-bottom: 99999px;
+    margin-bottom: -99999px;
 	background-color: #1e1e1B;
 	vertical-align: top;
 	color: white;
@@ -54,6 +66,7 @@ p {
         position: relative;
         display:inline-block;
         width: 210px;
+        cursor: pointer;
     }
     .chevron {
         height: 0;
@@ -127,6 +140,39 @@ p {
 	background-color: lightgrey;
 }
 
+.show_more {
+    display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    margin-left: 20px;
+    font-family: "Lucida Sans";
+    letter-spacing: 1px;
+    width: 95px;
+    height: 25px;
+    max-width: 95px;
+    max-height: 25px;
+    cursor: pointer;
+    color: white;
+    font-size: 11px;
+    background-color: black;
+}
+.show_more_disabled {
+    display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    margin-left: 20px;
+    font-family: "Lucida Sans";
+    letter-spacing: 1px;
+    width: 95px;
+    height: 25px;
+    max-width: 95px;
+    max-height: 25px;
+    cursor: default;
+    color: white;
+    font-size: 11px;
+    background-color: lightgrey;
+}
+
 .results_container {
 	display: inline-block;
 	width:656px;
@@ -146,39 +192,6 @@ p {
                 font-size: 14px;
             }
 
-        }
-
-        .show_more {
-            display: inline-block;
-            text-align: center;
-            line-height: 25px;
-            margin-left: 20px;
-            font-family: "Lucida Sans";
-            letter-spacing: 1px;
-            width: 95px;
-            height: 25px;
-            max-width: 95px;
-            max-height: 25px;
-            cursor: pointer;
-            color: white;
-            font-size: 11px;
-            background-color: black;
-        }
-        .show_more_disabled {
-            display: inline-block;
-            text-align: center;
-            line-height: 25px;
-            margin-left: 20px;
-            font-family: "Lucida Sans";
-            letter-spacing: 1px;
-            width: 95px;
-            height: 25px;
-            max-width: 95px;
-            max-height: 25px;
-            cursor: pointer;
-            color: white;
-            font-size: 11px;
-            background-color: lightgrey;
         }
 
         .breadcrumbs {
@@ -227,7 +240,7 @@ p {
                 font-family: "Lucida Sans";
                 font-size: 13px;
                 font-weight: bold;
-                padding-left: 30px;
+                padding-left: 10px;
                 width: 150px;
                 height: 30px;
                 border-radius: 0px;
@@ -242,7 +255,7 @@ p {
             bottom: 0;
             font-size: 60%;
             line-height: 30px;
-            padding: 0 7px;
+            padding: 0 7px 0 0;
         }
     }
     .results_content {
@@ -266,7 +279,6 @@ p {
                 bottom: 0;
                 width: 150px;
                 min-height: 250px;
-                max-height: 270px;
                 display: inline-block;
                 img {
                     // max-width:150px;
@@ -316,9 +328,14 @@ p {
                         display: table-cell;
                         vertical-align: top;
 
-                        .title_text {
-                            font-size: 18px;
-                            font-family: "Georgia", serif;
+                        .title_link {
+                            text-decoration: none;
+                            underline: none;
+                            color: black;
+                            .title_text {
+                                font-size: 18px;
+                                font-family: "Georgia", serif;
+                            }
                         }
                     }
                 }
@@ -333,15 +350,17 @@ p {
                     white-space: nowrap;
                 }
                 .description {
-                    margin: 10px 0px;
+                    margin: 10px 0px 50px 0px;
                 }
-
                 .price {
                     border: 1px lightgrey solid;
                     padding: 10px 25px;
                     width: auto;
                     display: inline-block;
                     float:left;
+                    bottom: 20px;
+                    // position: relative;
+                    position:absolute;
                     bottom: 20px;
                     p {
                         color: #6699CC;
@@ -350,5 +369,15 @@ p {
                 }
             }
         }
+    }
+}
+.footer_show_more {
+    text-align: center;
+    .show_more_disabled {
+        margin: 15px auto;
+        cursor: default;
+    }
+    .show_more {
+        margin: 15px auto;
     }
 }

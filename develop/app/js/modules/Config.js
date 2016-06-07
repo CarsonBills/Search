@@ -20,7 +20,7 @@ var helper = require('modules/ajax_helper'),
             },
 
             reset = function () {
-                return Data
+                return Data;
             },
 
             echo = function (prop) {
@@ -31,7 +31,7 @@ var helper = require('modules/ajax_helper'),
                 if (prop){
                     return Data[prop];
                 } else {
-                    return Data
+                    return Data;
                 }
             },
 

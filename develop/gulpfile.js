@@ -65,7 +65,12 @@ gulp.task('fileinclude', function () {
         }))
         .pipe(fileinclude({
             prefix: '@@',
-            basepath: '@file'
+            basepath: '@file',
+            context: {
+                gtm: 'GTM-KV4V6R',
+                ga: 'yyy'
+            }
+
         }))
         .pipe(htmlreplace(assets))
         .pipe(gulp.dest(deploy))

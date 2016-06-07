@@ -1,8 +1,8 @@
-var searchHelper = require("modules/search_helper"),
+var searchHelper = require('modules/search_helper'),
     ajaxHelper = (function () {
-    'use strict';
-    var deferred = $.Deferred(),
-        searchQuery = searchHelper.getQuery(),
+        'use strict';
+        var deferred = $.Deferred(),
+        searchQuery = searchHelper.getUrlQuery(),
         load = function (url) {
             $.ajax({
                 dataType: 'json',
@@ -11,17 +11,13 @@ var searchHelper = require("modules/search_helper"),
                 data: {
                     'query': searchQuery,
                     'fields': ['*'],
-                    'sort': {
-                    'field': 'title',
-                    'order': 'Ascending'
-                    },
                     'pruneRefinements': false,
                     'skip': 0,
-                    'pageSize': 25
-                    },
+                    'pageSize': 15
+                },
                 success: function (response) {
                     if (response) {
-                        console.log("FIRST RESPONSE", response)
+                        console.log('FIRST RESPONSE', response);
                         deferred.resolve(response);
                     }
                 },
@@ -32,9 +28,9 @@ var searchHelper = require("modules/search_helper"),
             return deferred.promise();
         };
 
-    return {
-        load: load
-    };
-}());
+        return {
+            load: load
+        };
+    }());
 
 module.exports = ajaxHelper;
