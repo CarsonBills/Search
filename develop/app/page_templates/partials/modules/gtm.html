@@ -14,12 +14,12 @@
 
 
 	<script type="text/javascript">
-		var doTrack = function () {
+		var doTrack = function (event, misc, action, label) {
 			var i,
 				val = '',
 				length = arguments.length,
 				options = {};
-			for (i = 0; i < length; i += 1) {
+			/*for (i = 0; i < length; i += 1) {
 				if (arguments[i] !== '') {
 					val += arguments[i];
 
@@ -27,10 +27,14 @@
 						val += '.';
 					}
 				}
-			}
+			}*/
 
 			options = {
-          		'event': val
+          		'event': event,
+          		'dataLayer-analyticId': 'UA-66576513-2',
+          		'dataLayer-category': 'SearchResultsPage',
+          		'dataLayer-action': action,
+          		'dataLayer-label': label
             };
             dataLayer.push(options);
 			console.log(dataLayer)

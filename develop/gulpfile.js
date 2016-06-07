@@ -68,7 +68,7 @@ gulp.task('fileinclude', function () {
             basepath: '@file',
             context: {
                 gtm: 'GTM-KV4V6R',
-                ga: 'yyy'
+                ga: 'UA-66576513-2'
             }
 
         }))

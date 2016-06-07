@@ -12,13 +12,13 @@
         <div class="show_more_disabled">SHOW MORE</div>
     {{/if}}
     <div class="sort_display">
-        <select name="sort" id='sort_select' class="sort_select">
-            <option onclick="doTrack('click.sort', '', 'sort', 'Relevance');" value="-">Relevance</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Title A-Z');" value="title-Ascending">Title A-Z</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'By Lowest Price');" value="us_list_price-Ascending">By Lowest Price</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Oldest');" value="pub_date-Ascending">Oldest</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Newest');" value="pub_date-Descending">Newest</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Author A-Z');" value="s_str_primary_author-Ascending">Author A-Z</option>
+        <select name="sort" id='sort_select' class="sort_select" onchange="doTrack('click.sort', '', 'sort', $(this).prop('domvalue'))">
+            <option onclick="doTrack('click.sort', '', 'sort', 'Relevance');" value="-" domvalue="Relevance">Relevance</option>
+            <option onclick="doTrack('click.sort', '', 'sort', 'Title A-Z');" value="title-Ascending" domvalue="Title A-Z">Title A-Z</option>
+            <option onclick="doTrack('click.sort', '', 'sort', 'By Lowest Price');" value="us_list_price-Ascending" domvalue="By Lowest Price">By Lowest Price</option>
+            <option onclick="doTrack('click.sort', '', 'sort', 'Oldest');" value="pub_date-Ascending" domvalue="Oldest">Oldest</option>
+            <option onclick="doTrack('click.sort', '', 'sort', 'Newest');" value="pub_date-Descending" domvalue="Newsest">Newest</option>
+            <option onclick="doTrack('click.sort', '', 'sort', 'Author A-Z');" value="s_str_primary_author-Ascending" domvalue="Author A-Z">Author A-Z</option>
         </select>
     </div>
     <div class="breadcrumbs" onclick="doTrack('click.breadcrumb', '', 'breadcrumb', 'reset all or reset');">{{#if breadcrumbs}}{{{breadcrumbs}}}{{/if}}</div>
