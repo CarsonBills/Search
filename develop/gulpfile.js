@@ -5,6 +5,7 @@ var gulp = require('gulp'),
         }),
     del         = require('del'),
     gulpif      = require('gulp-if'),
+    gulpdust    = require('gulp-dust'),
     hbsfy       = require('browserify-handlebars'),
     fileinclude = require('gulp-file-include'),
     htmlreplace = require('gulp-html-replace'),
@@ -16,7 +17,7 @@ var gulp = require('gulp'),
         page_templates: "page_templates/", // file-include templates
         templates: "templates/", // handlebars templates
         js: "js/",
-        json: "json/",
+        vendor: "vendor/",
         fonts: "fonts/",
         sass: "sass/",
         sass_sprite: '/sass/sprite/',
@@ -36,6 +37,11 @@ function getHTMLAssets(path) {
         js: {
             src: [
                 'https://code.jquery.com/jquery-2.2.2.min.js',
+                'js/jquery-ui.min.js',
+                "js/sayt-2.2.83.js",
+                "js/autocompleteTemplate.js",
+                "js/dust-core.min.js",
+                "js/sayt.js",
                 'js/bundle.min.js'
             ],
             tpl: '<script src="%s"></script>'
@@ -144,9 +150,15 @@ gulp.task('eslint', function() {
 
 gulp.task('copy_data', function () {
     return gulp.src([
-            app + settings.json + '**/*.json'
+            app + settings.vendor + '**/*.js'
         ])
-        .pipe(gulp.dest(deploy + settings.json));
+        .pipe(gulp.dest(deploy + settings.vendor));
+});
+
+gulp.task('compile', function(){
+    return gulp.src(app + settings.page_templates + 'partials/modules/sayt.html')
+        .pipe(gulpdust())
+        .pipe(gulp.dest(deploy + 'js'));
 });
 
 gulp.task('build', function () {
@@ -155,6 +167,7 @@ gulp.task('build', function () {
             'gulp copy_data',
             'gulp browserify',
             'gulp fileinclude',
+            'gulp compile',
             'gulp sass'
         ], {
             maxBuffer: 4000
@@ -174,7 +187,7 @@ gulp.task('watch', ['fileinclude', 'sass', 'browserify', 'copy_data'], function 
 
     gulp.watch([app + settings.page_templates + '**/*.html'], ['fileinclude']);
     gulp.watch([app + settings.sass + '**/*.scss'], ['sass']);
-    gulp.watch([app + settings.json + '**/*.json'], ['copy_data']);
+    gulp.watch([app + settings.vendor + '**/*.js'], ['copy_data']);
     gulp.watch([app + settings.js + "**/*.js"], ['eslint']);
     gulp.watch([
         app + settings.templates + '**/*',

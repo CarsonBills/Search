@@ -1,0 +1,61 @@
+{#items}
+    {#products}
+        {#allMeta.cover_image}
+            <div class="sayt-frame">
+                <a class="sayt-title-link" href="http://books.wwnorton.com/books/{allMeta.s_str_isbn_formatted}"> 
+                    <div class="sayt-result">
+                        <div class="sayt-cover">
+                            <img src="{allMeta.cover_image}"></img>
+                        </div>
+                        <div class="sayt-details">
+                            <div class="sayt-title">
+                                <p>
+                                    {title|s}{#allMeta.sub_title}: {allMeta.sub_title|s}{/allMeta.sub_title}
+                                </p>
+                            </div>
+                            <div class="sayt-author">
+                                <p>
+                                    {allMeta.s_str_primary_author}
+                                </p>
+                            </div>
+                        </div>
+                        {#allMeta.edition_text}
+                            <div class="sayt-edition">
+                                <p>{allMeta.edition_text}</p>
+                            </div>
+                        {/allMeta.edition_text}
+                    </div>
+                </a>
+            </div>
+        {:else}
+            <div class="sayt-frame">
+                <a class="sayt-title-link" href="http://books.wwnorton.com/books/{allMeta.s_str_isbn_formatted}">
+                    <div class="sayt-result">
+                        <div class="sayt-no-cover">
+                            <div>
+                                <p>No Cover</p>
+                            </div>
+                        </div>
+                        <div class="sayt-details">
+                            <div class="sayt-title">
+                                <p>
+                                    {title|s}{#allMeta.sub_title}: {allMeta.sub_title|s}{/allMeta.sub_title}
+                                </p>
+                            </div>
+                            <div class="sayt-author">
+                                <p>
+                                    {allMeta.s_str_primary_author}
+                                </p>
+                            </div>
+                        </div>
+                        {#allMeta.edition_text}
+                            <div class="sayt-edition">
+                                <p>{allMeta.edition_text}</p>
+                            </div>
+                        {/allMeta.edition_text}
+                    </div>
+                </a>
+            </div>
+        {/allMeta.cover_image}
+    {/products}
+{/items}

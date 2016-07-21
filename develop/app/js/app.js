@@ -5,7 +5,7 @@ var Config = require('modules/Config'),
     hb_partials = require('hb_helpers/handlebars_partials');
 $(function () {
     'use strict';
-    Config.setup('//dev2-services.wwnorton.com/search/search.php').done(function () {
+    Config.setup('//stg-services.wwnorton.com/search/search.php').done(function () {
         ViewController.initialize();
     });
 });

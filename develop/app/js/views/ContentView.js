@@ -1,12 +1,9 @@
 var Config = require('modules/Config'),
-    searchHelper = require("modules/search_helper"),
     template = require('modules/contentTemplate.hbs'),
     Handlebars = require('handlebars'),
     ContentView = (function () {
         'use strict';
         var $el,
-            COUNT = 'totalRecordCount',
-            CONTEXT = 'records',
 
             initialize = function (options) {
                 $el = $(options.el);
@@ -29,55 +26,66 @@ var Config = require('modules/Config'),
                 render(target);
             },
 
-            setRefinements = function(data) {
-                refinements = data;
-            },
-
             enlargeImage = function(data){
-                for (var e = 0; e < data.length; e++){
-                    if(data[e]["allMeta"]["cover_image"]){
-                        var url = data[e]['allMeta']['cover_image']
-                        if (url.slice(-6, -4) === "72"){
-                            url = url.slice(0, -6)+"198.jpg"
-                            data[e]['allMeta']['cover_image'] = url;
+                for (var e = 0; e < data['records'].length; e++){
+                    if(data['records'][e]['allMeta']['cover_image']){
+                        var url = data['records'][e]['allMeta']['cover_image'];
+                        if (url.slice(-20).split('_')[1] === '72.jpg'){
+                            data['records'][e]['allMeta']['cover_image'] = url.slice(0, -6)+'198.jpg';
+                        } else if (url.slice(-20).split('_')[1] === '72.jpeg'){
+                            data['records'][e]['allMeta']['cover_image'] = url.slice(0, -7)+'198.jpeg';
                         }
                     }
                 }
-                return data
+                return data;
+            },
+
+            scrapePrice = function(data){
+                for (var q = 0; q < data['records'].length; q++){
+                    if (data['records'][q]['allMeta']['lowest_price']  && data['records'][q]['allMeta']['lowest_price'].includes(' ')) {
+                        data['records'][q]['allMeta']['lowest_price'] = data['records'][q]['allMeta']['lowest_price'].split(' ')[1]; 
+                    }
+                    if (!data['records'][q]['allMeta']['lowest_price'].includes('.')){
+                        data['records'][q]['allMeta']['lowest_price'] = data['records'][q]['allMeta']['lowest_price']+'.00';
+                    }
+                }
+                return data;
+            },
+
+            processResults = function(data){
+                var formattedData = scrapePrice(enlargeImage(data));
+                return formattedData;
             },
 
             gettotalCount = function(context){
                 if(context.records.length !== context.totalRecordCount){
                     return context.totalRecordCount;
                 } else {
-                    return "";
+                    return '';
                 }
-            },
-
-            applyFilters = function (context){
-                return context
             },
 
             render = function (context) {
                 if (context === ''){
                     context = Config.get();
-                } else if (context === "reset"){
+                } else if (context === 'reset'){
                     context = Config.reset();
                 }
                 // truncateString(context, [['description', 160],['title', 45]]);
-                var breadcrumbs = $el.find(".breadcrumbs").html()
+                var breadcrumbs = $el.find('.breadcrumbs').html();
+                console.log(context);
                 $el.empty();
                 $el.append(template({
-                    content: enlargeImage(context.records),
+                    content: processResults(context),
                     totalCount: gettotalCount(context),
                     breadcrumbs: breadcrumbs
                 }));
-                $el.find(".breadcrumbs").show()
+                $el.find('.breadcrumbs').show();
             };
 
         return {
             initialize: initialize,
-            showFiltered: showFiltered,
+            showFiltered: showFiltered
         };
     }());
 

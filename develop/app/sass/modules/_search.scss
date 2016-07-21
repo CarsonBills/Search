@@ -13,6 +13,86 @@ html, body {
     position: relative;
 }
 
+.sayt-title-link {
+    text-decoration: none;
+}
+.sayt-frame {
+    width: 423px;
+    .sayt-result {
+        width: 423px;
+        position:relative;
+        border-bottom: lightgrey solid 1px; 
+        margin: 0 10px 0 10px;
+        .sayt-cover {
+            width:73px; 
+            max-width:73px;
+            display:inline-block; 
+            padding: 8px 0 8px 0;
+            img {
+                height:70px;
+                max-width:73px;
+            }
+        }
+        .sayt-no-cover {
+            width:73px; 
+            display:inline-block; 
+            padding: 8px 0 8px 0;
+            div {
+                background-color:lightgrey;
+                max-width: 50px; 
+                height: 50px;
+                max-height: 50px;
+                padding-top:35px;
+                padding-left:4px;
+                color:white;
+            }
+        }
+        .sayt-details {
+            width:250px;
+            display:inline-block;
+            .sayt-title {
+                vertical-align:top;
+                position: absolute;
+                top:10px;
+                p {
+                    display:block;
+                    width:345px;
+                    vertical-align:top;
+                    font-size: 13px;
+                }
+            }
+            .sayt-author {
+                vertical-align:bottom;
+                position: absolute;
+                bottom:10px;
+                p {
+                    display:block;
+                    width:345px;
+                    vertical-align:bottom; 
+                    font-size: 13px;
+                }
+            }
+        }
+        .sayt-edition {
+            width:100px;
+            display:inline-block;
+            position:absolute;
+            top:30px;
+            p {
+                font-size: 13px;
+                vertical-align:middle;
+            }
+        }
+    }
+}
+
+.no_cover_small {
+    width: 72px;
+    height: 100px;
+    display: inline-block;
+    background-color: lightgrey;
+}
+
 .clear_search {
     position: absolute;
     right: 73px;
@@ -25,10 +105,6 @@ h3 {
     font-size: 13px;
     font-weight: normal;
     color: grey;
-}
-
-p {
-	font-size: 14px;
 }
 
 .search_container {
@@ -107,7 +183,7 @@ p {
             p input {
                 position: absolute;
                 left: 2px;
-                top: 20%;
+                top: 10%;
             }
             h3 {
                 cursor: pointer;
@@ -173,7 +249,7 @@ p {
     background-color: lightgrey;
 }
 
-.results_container {
+.search_container .results_container {
 	display: inline-block;
 	width:656px;
 
@@ -192,6 +268,16 @@ p {
                 font-size: 14px;
             }
 
+        }
+
+        .corrected_query {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 15px;
+            p {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
         }
 
         .breadcrumbs {
@@ -317,6 +403,10 @@ p {
                 margin-left: 150px;
                 width:430px;
                 display: inline-block;
+                .reading_line {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                }
                 .authors {
                     margin-top: 5px;
                     margin-bottom: 5px;
@@ -340,6 +430,7 @@ p {
                     }
                 }
                 .edition {
+                    text-align: center;
                     border: 1px #95989A solid;
                     font-family: "Georgia", serif;
                     font-size: 12px;
@@ -347,10 +438,11 @@ p {
                     padding: 5px 10px;
                     display: inline-block;
                     float:right;
-                    white-space: nowrap;
+                    margin-left: 10px;
+                    min-width: 90px;
                 }
                 .description {
-                    margin: 10px 0px 50px 0px;
+                    margin: 7% 0px 50px 0px;
                 }
                 .price {
                     border: 1px lightgrey solid;
@@ -367,6 +459,20 @@ p {
                         display: inline-block;
                     }
                 }
+            }
+            p {
+                font-size: 14px;
+            }
+        }
+        .no_results {
+            width: 100%;
+            height: 200px;
+            font-size: 16px;
+            text-align: left;
+            padding-top: 20px;
+            padding-left: 10px;
+            p {
+                margin-bottom: 20px;
             }
         }
     }

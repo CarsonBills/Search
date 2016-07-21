@@ -1,93 +1,125 @@
 <div class="meta_results">
     <div class="number_results">
         {{#if totalCount}}
-            <p>Showing <span class="current_results">{{content.length}}</span> of {{totalCount}} results</p>
+            <p>Showing <span class="current_results">{{content.records.length}}</span> of {{totalCount}} results</p>
         {{else}}
-            <p>Showing all <span class="current_results">{{content.length}}</span> results</p>
+            {{#if content.records.length}}
+                <p>Showing all <span class="current_results">{{content.records.length}}</span> results</p>
+            {{else}}
+                <p>No results</p>
+            {{/if}}
         {{/if}}
     </div>
     {{#if totalCount}}
-        <div class="show_more" onclick="doTrack('click.button', '', 'load_more', 'pagination');">SHOW MORE</div>
+        <div class="show_more" onclick="doTrack('click.button', '', 'load_more_top', 'pagination');">SHOW MORE</div>
     {{else}}
-        <div class="show_more_disabled">SHOW MORE</div>
+        <div class="show_more_disabled" onclick="doTrack('click.button', '', 'load_more_top_disabled', 'pagination');">SHOW MORE</div>
     {{/if}}
     <div class="sort_display">
-        <select name="sort" id='sort_select' class="sort_select" onchange="doTrack('click.sort', '', 'sort', $(this).prop('domvalue'))">
-            <option onclick="doTrack('click.sort', '', 'sort', 'Relevance');" value="-" domvalue="Relevance">Relevance</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Title A-Z');" value="title-Ascending" domvalue="Title A-Z">Title A-Z</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'By Lowest Price');" value="us_list_price-Ascending" domvalue="By Lowest Price">By Lowest Price</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Oldest');" value="pub_date-Ascending" domvalue="Oldest">Oldest</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Newest');" value="pub_date-Descending" domvalue="Newsest">Newest</option>
-            <option onclick="doTrack('click.sort', '', 'sort', 'Author A-Z');" value="s_str_primary_author-Ascending" domvalue="Author A-Z">Author A-Z</option>
-        </select>
+        {{#if content.records.length}}
+            <select name="sort" id='sort_select' class="sort_select" onchange="doTrack('click.sort', '', 'sort', this.value)">
+        {{else}}
+            <select disabled name="sort" id='sort_select' class="sort_select" onchange="doTrack('click.sort', '', 'sort', this.value)">
+        {{/if}}
+                <option onclick="doTrack('click.sort', '', 'sort', 'Relevance');" value="Relevance" sortvalue="-">Relevance</option>
+                <option onclick="doTrack('click.sort', '', 'sort', 'Title A-Z');" value="Title A-Z" sortvalue="title-Ascending">Title A-Z</option>
+                <option onclick="doTrack('click.sort', '', 'sort', 'By Lowest Price');" value="By Lowest Price" sortvalue="lowest_price-Ascending">By Lowest Price</option>
+                <option onclick="doTrack('click.sort', '', 'sort', 'Oldest');" value="Oldest" sortvalue="pub_date-Ascending">Oldest</option>
+                <option onclick="doTrack('click.sort', '', 'sort', 'Newest');" value="Newest" sortvalue="pub_date-Descending" >Newest</option>
+                <option onclick="doTrack('click.sort', '', 'sort', 'Author A-Z');" value="Author A-Z" sortvalue="s_str_primary_author-Ascending">Author A-Z</option>
+            </select>
     </div>
+    {{#if content.correctedQuery}}
+        <div class="corrected_query">
+            <p>No results for: "{{content.originalQuery}}"</p>
+            <p>Showing results for: <b>{{content.correctedQuery}}</b></p>
+        </div> 
+    {{/if}}
     <div class="breadcrumbs" onclick="doTrack('click.breadcrumb', '', 'breadcrumb', 'reset all or reset');">{{#if breadcrumbs}}{{{breadcrumbs}}}{{/if}}</div>
 </div> 
 <div class="advertisement_banner"></div>
 <div class="results_content">
-	{{#each content}}
-		<div class="result">
-            <a href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}">
-    			<div class="image" onclick="doTrack('click.result', '', 'book-image', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
-    				{{#if allMeta.cover_image}}
-    					<img data-id="{{@index}}" src="{{allMeta.cover_image}}">
-    				{{else}}
-    					<div class="no_cover"><p>No Image<br>Available</p></div>
-    				{{/if}}
-    			</div>
-            </a>
-			<div class="details">
-				<div class="top">
-                        <div class="title">
-                            <a class="title_link" href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}" onclick="doTrack('click.result', '', 'book-title', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
-        						<h2 class="title_text">{{{ _t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
-                            </a>
-                        </div>
-					{{#if allMeta.edition_text}}
-                    	<div class="edition">
-							<p>{{ allMeta.edition_text}}</p>
-						</div>
-					{{/if}}
-				</div>
-                {{#if allMeta.authors}}
-    				<div class='authors'>
-    					<p>{{allMeta.authors.0.contributor_name}}</p>
+    {{#if content.records.length}}
+    	{{#each content.records}}
+    		<div class="result">
+                <a href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}">
+        			<div class="image" onclick="doTrack('click.result', '', 'book-image', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+        				{{#if allMeta.cover_image}}
+        					<img data-id="{{@index}}" src="{{allMeta.cover_image}}">
+        				{{else}}
+        					<div class="no_cover"><p>No Image<br>Available</p></div>
+        				{{/if}}
+        			</div>
+                </a>
+    			<div class="details">
+    				<div class="top">
+                            <div class="title">
+                                <a class="title_link" href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}" onclick="doTrack('click.result', '', 'book-title', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+            						<h2 class="title_text">{{{ _t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
+                                </a>
+                            </div>
+    					{{#if allMeta.edition_text}}
+                        	<div class="edition">
+    							<p>{{ allMeta.edition_text}}</p>
+    						</div>
+    					{{/if}}
     				</div>
-                {{/if}}
-				<div class="description">
-					<p>{{{allMeta.s_str_summary_text}}}</p>
-				</div>
-                <div class="price_container" onclick="doTrack('click.result', '', 'options', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
-                    {{#if_eq allMeta.s_int_textbook_only 1 }}
-                        <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}">
-                            <div class="price">
-                                {{#if allMeta.variants.1.isbn}}
-                                    <p>{{allMeta.variants.length}} options starting at ${{allMeta.lowest_price}}</p>
-                                {{else}}
-                                    <p>{{allMeta.variants.length}} option for ${{allMeta.lowest_price}}</p>
-                                {{/if}}
-                            </div>
-                        </a>
-                    {{else}}
-                        <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}">
-                            <div class="price">
-                                {{#if allMeta.variants.1.isbn}}
-                                    <p>{{allMeta.variants.length}} options starting at ${{allMeta.lowest_price}}</p>
-                                {{else}}
-                                    <p>{{allMeta.variants.length}} option for ${{allMeta.lowest_price}}</p>
-                                {{/if}}
-                            </div>
-                        </a>
-                    {{/if_eq}}
-                </div>
-			</div>
-		</div>
-	{{/each}}
+                    {{#if allMeta.s_str_reading_line}}
+                        <div class="reading_line">
+                            <p>{{{allMeta.s_str_reading_line}}}</p>
+                        </div>
+                    {{/if}}
+                    {{#if allMeta.authors}}
+                        <div class='authors'>
+                            <p>{{allMeta.authors.0.author.0.contributor_name}}</p>
+                        </div>
+                    {{/if}}
+                    <div class="description">
+    					<p>{{{allMeta.s_str_summary_text}}}</p>
+    				</div>
+                    <div class="price_container" onclick="doTrack('click.result', '', 'options', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+                        {{#if_eq allMeta.s_int_textbook_only 1 }}
+                            <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}">
+                                <div class="price">
+                                    {{#if allMeta.variants.1.isbn}}
+                                        <p>Options starting at ${{allMeta.lowest_price}}</p>
+                                    {{else}}
+                                        <p>1 option for ${{allMeta.lowest_price}}</p>
+                                    {{/if}}
+                                </div>
+                            </a>
+                        {{else}}
+                            <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}">
+                                <div class="price">
+                                    {{#if allMeta.variants.1.isbn}}
+                                        <p>Options starting at ${{allMeta.lowest_price}}</p>
+                                    {{else}}
+                                        <p>1 option for ${{allMeta.lowest_price}}</p>
+                                    {{/if}}
+                                </div>
+                            </a>
+                        {{/if_eq}}
+                    </div>
+    			</div>
+    		</div>
+    	{{/each}}
+    {{else}}
+        <div class="no_results">
+            <p>No results for "{{content.query}}"</p>
+            {{#if content.didYouMean.length}}
+                <p>Did you mean to search for {{#each content.didYouMean}} "{{this}}" {{/each}}</p>                
+            {{/if}} 
+        </div>
+    {{/if}}
 </div>
 <div class="footer_show_more">
     {{#if totalCount}}
-        <div class="show_more" onclick="doTrack('click.button', '', 'load_more', 'pagination');">SHOW MORE</div>
+        <div class="show_more" onclick="doTrack('click.button', '', 'load_more_bottom', 'pagination');">SHOW MORE</div>
     {{else}}
-        <div class="show_more_disabled">SHOW MORE</div>
+        {{#if content.records.length}}
+            <div class="show_more_disabled" onclick="doTrack('click.button', '', 'load_more_bottom_disabled', 'pagination');">SHOW MORE</div>
+        {{else}}
+            {{!-- Show nothing --}}
+        {{/if}}
     {{/if}}
 </div>
