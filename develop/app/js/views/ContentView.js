@@ -73,7 +73,6 @@ var Config = require('modules/Config'),
                 }
                 // truncateString(context, [['description', 160],['title', 45]]);
                 var breadcrumbs = $el.find('.breadcrumbs').html();
-                console.log(context);
                 $el.empty();
                 $el.append(template({
                     content: processResults(context),

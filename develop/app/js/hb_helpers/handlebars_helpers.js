@@ -19,5 +19,10 @@ module.exports = (function() {
         else
             return opts.inverse(this);
     });  
-
+    Handlebars.registerHelper('if_first_char_eq', function(a, b, opts) {
+        if(a[0] === b[0])
+            return opts.fn(this);
+        else
+            return opts.inverse(this);
+    }); 
 })();

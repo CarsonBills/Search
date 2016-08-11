@@ -20,6 +20,7 @@ var Config = require('modules/Config'),
                 setupNav();
                 configureNavDisplay();
                 resetNav();
+                moreRefinements();
                 moreRecords();
                 sortRecords();
                 populateSearchBar();
@@ -45,57 +46,63 @@ var Config = require('modules/Config'),
                 $('#ctl00_searchbtn').click(function(event){
                     event.preventDefault();
                     var query = searchHelper.getSearchBarQuery();
-                    query = scrapeQuery(query);
-                    window.location.replace(window.location.origin + '/books/search-result.aspx?searchtext='+query+'');
+                    var search = scrapeQuery(query);
+                    window.location.href = search;
                 });
             },
 
             saytHighlight = function(){
-                    $('#ctl00_searchtext').keyup(function(){
-                        if ($('#ctl00_searchtext').val().length >= 3){
-                            setTimeout(function(){
-                                console.log('Hey!', $('.sayt-result'), $('#ctl00_searchtext').val());
-                                var match = $('#ctl00_searchtext').val();
-                                var regex = new RegExp(match, 'gi');
-                                console.log("REGEX", match, regex, $('.sayt-result').html())
-                                $('.sayt-result').each(function(){
-                                    var title = $(this).find('.sayt-title').html()
-                                    console.log(":)", $(this).find('.sayt-title').html().replace(regex, '<b>'+ match.charAt(0).toUpperCase() + '</b>'), match);
-                                    $(this).find('.sayt-title').html($(this).find('.sayt-title').html().replace(regex, '<b>'+ match[0].toUpperCase()+match.slice(1) + '</b>'));
-                                    $(this).find('.sayt-author').html($(this).find('.sayt-author').html().replace(regex, '<b>'+ match[0].toUpperCase()+match.slice(1) + '</b>'));
-                                    console.log("AFTER REPLACEMENT", $(this).find('.sayt-title').html())                  
-                                })  
-                            }, 1000);
-                        }
-                    })
+                $('#ctl00_searchtext').keyup(function(){
+                    if ($('#ctl00_searchtext').val().length >= 3){
+                        var match = $('#ctl00_searchtext').val();
+                        var regex = new RegExp(match, 'gi');
+                        setTimeout(function(){
+                            $('.sayt-result').each(function(){
+                                $(this).find('.sayt-title').html($(this).find('.sayt-title').html().replace(regex, '<b>'+ match[0].toUpperCase()+match.slice(1) + '</b>'));
+                                $(this).find('.sayt-author').html($(this).find('.sayt-author').html().replace(regex, '<b>'+ match[0].toUpperCase()+match.slice(1) + '</b>'));               
+                            });
+                        }, 500);
+                    }
+                });
             },
 
             scrapeQuery = function(query){
-                if (query.indexOf('+') === -1) {
-                    query = query + "*"
+                // unformatted isbn, convert to formatted and redirect there
+                if (query.search(/^([0-9]{13})$/) === 0){
+                    var splitQuery = query.split('');
+                    var indices = [3, 5, 9, 15];
+                    for (var f = 0; f < indices.length; f++){
+                        splitQuery.splice(indices[f], 0, '-');
+                    }
+                    return 'http://books.wwnorton.com/books/'+splitQuery.join('')+'';
+                } else if (query.indexOf('+') === -1 && query.search(/[0-9]{3}-[0-9]-[0-9]{3}-[0-9]{5}-[0-9]/) === -1) {
+                    // if single term query, and not an isbn, add * to widen results
+                    query = query + '*';
                 }
                 if (query.search(/[0-9]{3}-[0-9]-[0-9]{3}-[0-9]{5}-[0-9]/) === 0){
-                    //turn formatted ISBN to unformatted ISBN
-                    return query.replace(/-/g, '');
+                    // Keep formatted isbn and redirect to the book
+                    return 'http://books.wwnorton.com/books/'+query+'';
                 } else if (query.includes('"') || query.includes("'") ) {
                     // Delete quotes and apostrophes
-                    return query.replace(/"/g, '').replace(/'/g, '');
+                    var searchQuery = query.replace(/"/g, '').replace(/'/g, '');
+                    return '/books/search-result.aspx?searchtext='+searchQuery+'';
                 } else {
-                    return query;
+                    // Normal search, not additions
+                    return '/books/search-result.aspx?searchtext='+query+'';
                 }
             },
 
             populateSearchBar = function(){
                 var query = searchHelper.getUrlQuery();
                 if (query){
-                    $('#ctl00_searchtext').val(query.replace(/\+/g, ' ').replace(/\*/g, ' '));
+                    $('#ctl00_searchtext').val(query.replace(/\+/g, ' ').replace(/\*/g, ''));
                 }
             },
 
             checkRedirect = function(){
                 var data = Config.get();
                 if (data.redirect){
-                    window.location.replace(data.redirect);
+                    window.location.href = data.redirect;
                 }
             },
 
@@ -107,8 +114,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'refinements': domRefinements,
@@ -145,8 +152,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'pruneRefinements': false,
@@ -180,14 +187,15 @@ var Config = require('modules/Config'),
 
             moreRefinements = function(){
                 $el.find('.nav_show_more').click(function(e){
+                    console.log("******")
                     refinements = searchHelper.domRefinements(e);
                     var searchQuery = searchHelper.getUrlQuery();
                     $.ajax({
                         url: '//stg-services.wwnorton.com/search/search.php?more_ref=1',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'navigationName': $(e.currentTarget).parent().siblings('.category_level').text(),
                             'query': searchQuery,
                             'refinements': refinements
@@ -216,8 +224,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -255,8 +263,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -292,8 +300,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'refinements': refinements,
@@ -326,8 +334,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'pruneRefinements': false,
@@ -371,8 +379,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -414,8 +422,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -453,8 +461,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'refinements': refinements,
@@ -492,8 +500,8 @@ var Config = require('modules/Config'),
                             url: '//stg-services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'bookSearchProduction',
-                                'area': 'bookSearchProduction',
+                                'collection': 'dummyDevTwo',
+                                'area': 'dummyDevTwo',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'pruneRefinements': false,
@@ -528,6 +536,8 @@ var Config = require('modules/Config'),
                 });
             },
 
+
+//  This function exists to show more than 100 records
             sortRecordsCallback = function(totalcalls, callsleft, oldData){
                 // var calls = Math.ceil((parseInt($('.current_results').text()))/100);
                 refinements = searchHelper.domRefinements();
@@ -538,8 +548,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'sort': {
@@ -580,8 +590,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'sort': {
@@ -618,8 +628,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'refinements': refinements,
@@ -655,8 +665,8 @@ var Config = require('modules/Config'),
                         url: '//stg-services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'bookSearchProduction',
-                            'area': 'bookSearchProduction',
+                            'collection': 'dummyDevTwo',
+                            'area': 'dummyDevTwo',
                             'query': searchQuery,
                             'fields': ['*'],
                             'pruneRefinements': false,
@@ -779,9 +789,10 @@ var Config = require('modules/Config'),
             },
 
             collapseCategory = function(){
+                $el.find('.chevron, .nav_heading').off('click')
                 $el.find('.chevron, .nav_heading').click(function (e) {
                     //hide content on click
-                    $(e.currentTarget).siblings('.filters_checkboxes').toggleClass('collapsed').slideToggle('fast');       
+                    $(e.currentTarget).siblings('.filters_checkboxes').toggleClass('collapsed').slideToggle('fast');
                     //change chevron
                     var current = $(e.currentTarget).parent().find('i:visible');
                     $(e.currentTarget).parent().find('i:hidden').show();
@@ -807,11 +818,10 @@ var Config = require('modules/Config'),
                             if (data[b]['refinements'][x]['value'] === '' ||
                             data[b]['refinements'][x]['value'] === '[]' ||
                             data[b]['refinements'][x]['value'] === 'VHS' ||
-                            data[b]['refinements'][x]['value'] === 'Ebook Folder' ||
                             data[b]['refinements'][x]['value'] === 'Cassette'){
                                 data[b]['refinements'].splice(x, 1);
-                            } 
-                        } 
+                            }
+                        }
                         if(data[b]['refinements'].length > 0){
                             filters.push(data[b]);
                         }
@@ -900,7 +910,6 @@ var Config = require('modules/Config'),
                             if (data[b]['refinements'][x]['value'] === '' ||
                             data[b]['refinements'][x]['value'] === '[]' ||
                             data[b]['refinements'][x]['value'] === 'VHS' ||
-                            data[b]['refinements'][x]['value'] === 'Ebook Folder' ||
                             data[b]['refinements'][x]['value'] === 'Cassette'
                             ){
                                 data[b]['refinements'].splice(x, 1);
@@ -911,7 +920,6 @@ var Config = require('modules/Config'),
                         }
                     }
                 }
-
                 return filters;
             },
 
@@ -949,13 +957,31 @@ var Config = require('modules/Config'),
                 // SEARCH FOR DOM ELEMENT BY 'name' property and update that
                 if (data.navigation){
                     // Show more categories
+                    var that
                     $('.filter_group').each(function(){
                         if ($(this).find('.category_level').text() === data.navigation.name){
-                            $(this).empty().append(template({
-                                'categories': data.navigation
-                            }));
+                            console.log("Yep", [data.navigation], $(this).find('.category_level').text())
+                            that = $(this);
+                            // $(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories')
+                            if ($(this).find('.category_level').text().includes('categories')){
+                                $(this).empty().append(template({
+                                    'categories': googleHelper.getGoogleData(reCategories(data.navigation))
+                                }));
+                            } else {
+                                $(this).empty().append(template({
+                                    'filters': googleHelper.getGoogleFilterData(reFilter([data.navigation]))
+                                }));
+                            }
                         }
                     });
+                    updatePage(data);
+                    collapseCategory();
+                    // Only trigger click if the refinement does not show on default
+                    if (data.navigation.name === 'variants.volume' ||
+                        data.navigation.name === 'edition_text' ||
+                        data.navigation.name === 'series' ){
+                        that.find('.nav_heading').trigger('click');  
+                    }
                 } else {
                     if ($('div.categories').find('.category_level').text() === data.availableNavigation[0]['name'] && data.availableNavigation[0]['name'] !== 'categories.categories.categories.value'){
                         // When you hit the end of the category specificity, stop rendering same subcategory
@@ -976,8 +1002,8 @@ var Config = require('modules/Config'),
                             filters: googleHelper.getGoogleFilterData(reFilter(data.availableNavigation))
                         }));
                     }
+                    updatePage(data);
                 }
-                updatePage(data);
                 filterCheckBox();
                 clickCheckBox();
                 setupNav(data['selectedNavigation']);
@@ -989,7 +1015,8 @@ var Config = require('modules/Config'),
                 if (initCategories(context).name && initFilters(context).length){
                     $el.append(template({
                         categories: googleHelper.getGoogleData(initCategories(context)),
-                        filters: googleHelper.getGoogleFilterData(initFilters(context))
+                        filters: googleHelper.getGoogleFilterData(reFilter(context)),
+                        resources: googleHelper.getGoogleResourceData(getResources(context))
                     }));
                 } else if (initCategories(context).name){
                     $el.append(template({
@@ -997,7 +1024,7 @@ var Config = require('modules/Config'),
                     }));
                 } else if (initFilters(context).length){
                     $el.append(template({
-                        filters: googleHelper.getGoogleFilterData(initFilters(context))
+                        filters: googleHelper.getGoogleFilterData(reFilter(context))
                     }));
                 }
             };
