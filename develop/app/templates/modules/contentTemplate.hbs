@@ -39,10 +39,24 @@
 </div> 
 <div class="advertisement_banner"></div>
 <div class="results_content">
+    {{#if content.relatedQueries}}
+        <div class="related_query">
+            {{#if_length_more_1 content.relatedQueries}}
+                <p class="suggestion">Related search terms:</p>
+                {{#each content.relatedQueries}} <a class="did_you_mean" href="/books/search-result.aspx?searchtext={{this}}">{{this}}</a> &nbsp;{{/each}}
+            {{else}}
+                <p class="suggestion">Related search term: {{#each content.relatedQueries}} <a class="did_you_mean" href="/books/search-result.aspx?searchtext={{this}}">{{this}}</a> {{/each}}</p>
+            {{/if_length_more_1}} 
+        </div>
+    {{/if}}
     {{#if content.records.length}}
     	{{#each content.records}}
     		<div class="result">
-                <a href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}">
+                {{#if allMeta.variants.0.isbn_formatted}}
+                    <a href="http://books.wwnorton.com/books/{{allMeta.variants.0.isbn_formatted}}">
+                {{else}}
+                    <a href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}">
+                {{/if}}
         			<div class="image" onclick="doTrack('click.result', '', 'book-image', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
         				{{#if allMeta.cover_image}}
         					<img data-id="{{@index}}" src="{{allMeta.cover_image}}">
@@ -54,7 +68,12 @@
     			<div class="details">
     				<div class="top">
                             <div class="title">
+                                {{#if allMeta.variants.0.isbn_formatted}}
+                                <a class="title_link" href="http://books.wwnorton.com/books/{{allMeta.variants.0.isbn_formatted}}" onclick="doTrack('click.result', '', 'book-title', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+                                {{else}}
                                 <a class="title_link" href="http://books.wwnorton.com/books/{{allMeta.s_str_isbn_formatted}}" onclick="doTrack('click.result', '', 'book-title', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+                                {{/if}}
+
             						<h2 class="title_text">{{{ _t}}}{{#if allMeta.sub_title}}: {{{allMeta.sub_title}}}{{/if}}</h2>
                                 </a>
                             </div>
@@ -64,11 +83,6 @@
     						</div>
     					{{/if}}
     				</div>
-                    {{#if allMeta.s_str_reading_line}}
-                        <div class="reading_line">
-                            <p>{{{allMeta.s_str_reading_line}}}</p>
-                        </div>
-                    {{/if}}
                     {{#if allMeta.authors}}
                         <div class='authors'>
                             <p>
@@ -78,12 +92,58 @@
                             </p>
                         </div>
                     {{/if}}
+                    {{#if allMeta.authors}}
+                        <div class="volume">
+                            <p><b>{{{allMeta.volume}}}</b></p>
+                        </div>
+                    {{/if}}
+                    {{#if allMeta.s_str_reading_line}}
+                        <div class="reading_line">
+                            <p>{{{allMeta.s_str_reading_line}}}</p>
+                        </div>
+                    {{/if}}
                     <div class="description">
     					<p>{{{allMeta.s_str_summary_text}}}</p>
     				</div>
-                    <div class="price_container" onclick="doTrack('click.result', '', 'options', '{{{_t}}}{{#if allMeta.sub_title}}+{{allMeta.sub_title}}{{/if}}.{{allMeta.s_str_isbn}}');">
+                    <div class="price_container">
+                        {{!-- If master record, show options --}}
                         {{#if_first_char_eq allMeta.id 'm' }}
-                            <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}">
+                           {{#if_eq allMeta.s_int_textbook_only 1 }}
+                               {{#each allMeta.variants}}
+                                    {{!-- <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}"> --}}
+                                    {{#if isbn_formatted}}    
+                                        <a href="http://books.wwnorton.com/books/{{isbn_formatted}}">
+                                    {{else}}
+                                        <a href="http://books.wwnorton.com/books/{{isbn}}">
+                                    {{/if}}
+                                        <div class="price" onclick="doTrack('click.result', '', 'options.{{product_form}}', '{{{s_str_custom_title}}}.{{isbn}}');">
+                                            {{#if allMeta.variants.1.isbn}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{else}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </a>
+                                {{/each}}
+                            {{else}}
+                                {{#each allMeta.variants}}
+                                    {{!-- <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}"> --}}
+                                    {{#if isbn_formatted}}    
+                                        <a href="http://books.wwnorton.com/books/{{isbn_formatted}}">
+                                    {{else}}
+                                        <a href="http://books.wwnorton.com/books/{{isbn}}">
+                                    {{/if}}
+                                        <div class="price" onclick="doTrack('click.result', '', 'options.{{product_form}}', '{{{s_str_custom_title}}}.{{isbn}}');">
+                                            {{#if allMeta.variants.1.isbn}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{else}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </a>
+                                {{/each}}
+                            {{/if_eq}}
+{{!--                             <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}">
                                 <div class="price">
                                     {{#each allMeta.variants}}
                                         <p>Format: {{product_form}} -- Price: {{us_list_price}}</p><br>
@@ -94,9 +154,45 @@
                                         <p>1 option for ${{allMeta.lowest_price}}</p>
                                     {{/if}}
                                 </div>
-                            </a>
+                            </a> --}}
                         {{else}}
-                            <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}">
+                        {{!-- If variant record, show detail page for textbook, and format for non-textbook --}}
+                            {{#if_eq allMeta.s_int_textbook_only 1 }}
+                                {{#each allMeta.variants}}
+                                    {{!-- <a href="http://books.wwnorton.com/books/webad.aspx?id={{allMeta.content_id}}"> --}}
+                                    {{#if isbn_formatted}}    
+                                        <a href="http://books.wwnorton.com/books/{{isbn_formatted}}">
+                                    {{else}}
+                                        <a href="http://books.wwnorton.com/books/{{isbn}}">
+                                    {{/if}}
+                                        <div class="price" onclick="doTrack('click.result', '', 'options.{{product_form}}', '{{{s_str_custom_title}}}.{{isbn}}');">
+                                            {{#if allMeta.variants.1.isbn}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{else}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </a>
+                                {{/each}}
+                            {{else}}
+                                {{#each allMeta.variants}}
+                                    {{!-- <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}"> --}}
+                                    {{#if isbn_formatted}}    
+                                        <a href="http://books.wwnorton.com/books/{{isbn_formatted}}">
+                                    {{else}}
+                                        <a href="http://books.wwnorton.com/books/{{isbn}}">
+                                    {{/if}}
+                                        <div class="price" onclick="doTrack('click.result', '', 'options.{{product_form}}', '{{{s_str_custom_title}}}.{{isbn}}');">
+                                            {{#if allMeta.variants.1.isbn}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{else}}
+                                                <p><b>{{product_form}}:</b> ${{us_list_price}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </a>
+                                {{/each}}
+                            {{/if_eq}}
+{{!--                             <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}">
                                 <div class="price">
                                     {{#each allMeta.variants}}
                                         <p>Format: {{product_form}} -- Price: {{us_list_price}}</p><br>
@@ -107,45 +203,23 @@
                                         <p>1 option for ${{allMeta.lowest_price}}</p>
                                     {{/if}}
                                 </div>
-                            </a>
+                            </a> --}}
                         {{/if_first_char_eq}}
-                       {{!--  {{#if_eq allMeta.s_int_textbook_only 1 }}
-                            <a href="http://books.wwnorton.com/books/webad-detail-editions.aspx?id={{allMeta.content_id}}">
-                                <div class="price">
-                                    {{#each allMeta.variants}}
-                                        <p>Format: {{product_form}} -- Price: {{us_list_price}}</p><br>
-                                    {{/each}}
-                                    {{#if allMeta.variants.1.isbn}}
-                                        <p>Options starting at ${{allMeta.lowest_price}}</p>
-                                    {{else}}
-                                        <p>1 option for ${{allMeta.lowest_price}}</p>
-                                    {{/if}}
-                                </div>
-                            </a>
-                        {{else}}
-                            <a href="http://books.wwnorton.com/books/detail-formats.aspx?ID={{allMeta.content_id}}">
-                                <div class="price">
-                                    {{#each allMeta.variants}}
-                                        <p>Format: {{product_form}} -- Price: {{us_list_price}}</p><br>
-                                    {{/each}}
-                                    {{#if allMeta.variants.1.isbn}}
-                                        <p>Options starting at ${{allMeta.lowest_price}}</p>
-                                    {{else}}
-                                        <p>1 option for ${{allMeta.lowest_price}}</p>
-                                    {{/if}}
-                                </div>
-                            </a>
-                        {{/if_eq}} --}}
                     </div>
     			</div>
     		</div>
     	{{/each}}
     {{else}}
         <div class="no_results">
-            <p>No results for "{{content.query}}"</p>
-            {{#if content.didYouMean.length}}
-                <p>Did you mean to search for {{#each content.didYouMean}} "{{this}}" {{/each}}</p>
-            {{/if}} 
+            <p class="no_results_header">No results for "{{{content.query}}}"</p>
+            {{#if_length_more_1 content.didYouMean}}
+                <p class="suggestion">Did you mean:</p>
+                {{#each content.didYouMean}} <a class="did_you_mean" href="/books/search-result.aspx?searchtext={{this}}">{{this}}</a> &nbsp;{{/each}}
+            {{else}}
+                {{#if content.didYouMean}}
+                    <p class="suggestion">Did you mean to search for {{#each content.didYouMean}} <a class="did_you_mean" href="/books/search-result.aspx?searchtext={{this}}">{{this}}?</a> {{/each}}</p>
+                {{/if}}
+            {{/if_length_more_1}} 
         </div>
     {{/if}}
 </div>
@@ -160,3 +234,4 @@
         {{/if}}
     {{/if}}
 </div>
+

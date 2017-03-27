@@ -70,7 +70,7 @@ var searchHelper = (function () {
 
         getUrlQuery = function(){
             if (window.location.href.slice(window.location.href.indexOf('?') + 1).split('=')[0] === 'searchtext'){
-                return window.location.href.slice(window.location.href.indexOf('?') + 1).split('=')[1].replace(/\+/g, ' ');
+                return decodeURI(window.location.href.slice(window.location.href.indexOf('?') + 1).split('=')[1].replace(/\+/g, ' '));
             }
         },
 

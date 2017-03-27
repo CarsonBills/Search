@@ -25,4 +25,10 @@ module.exports = (function() {
         else
             return opts.inverse(this);
     }); 
+    Handlebars.registerHelper('if_length_more_1', function(a, opts) {
+        if(a[1] !== undefined)
+            return opts.fn(this);
+        else
+            return opts.inverse(this);
+    }); 
 })();

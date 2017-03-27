@@ -9,8 +9,9 @@ var searchHelper = require('modules/search_helper'),
                     url: url,
                     method: 'POST',
                     data: {
-                        'collection': 'dummyDevTwo',
-                        'area': 'dummyDevTwo',
+                        'collection': 'bookSearchProduction',
+                        'area': 'bookSearchProductionGBTuning',
+                        'disableAutocorrection': true,
                         'query': searchQuery,
                         'fields': ['*'],
                         'pruneRefinements': false,
@@ -20,7 +21,6 @@ var searchHelper = require('modules/search_helper'),
                     },
                     success: function (response) {
                         if (response) {
-                            console.log(response);
                             deferred.resolve(response);
                         }
                     },

@@ -75,16 +75,13 @@ var Config = require('modules/Config'),
                         splitQuery.splice(indices[f], 0, '-');
                     }
                     return 'http://books.wwnorton.com/books/'+splitQuery.join('')+'';
-                } else if (query.indexOf('+') === -1 && query.search(/[0-9]{3}-[0-9]-[0-9]{3}-[0-9]{5}-[0-9]/) === -1) {
-                    // if single term query, and not an isbn, add * to widen results
-                    query = query + '*';
                 }
                 if (query.search(/[0-9]{3}-[0-9]-[0-9]{3}-[0-9]{5}-[0-9]/) === 0){
                     // Keep formatted isbn and redirect to the book
                     return 'http://books.wwnorton.com/books/'+query+'';
-                } else if (query.includes('"') || query.includes("'") ) {
+                } else if (query.indexOf('"') !== -1 || query.indexOf("'") !== -1 ) {
                     // Delete quotes and apostrophes
-                    var searchQuery = query.replace(/"/g, '').replace(/'/g, '');
+                    var searchQuery = query.replace(/"/g, '').replace(/'/g, "\'");
                     return '/books/search-result.aspx?searchtext='+searchQuery+'';
                 } else {
                     // Normal search, not additions
@@ -92,10 +89,31 @@ var Config = require('modules/Config'),
                 }
             },
 
+            removeFormatFromUrl = function(data){
+                for (var p = 0; p < data.length; p++){
+                    var url = window.location.href;
+                    var match = '\\+' + data[p].replace(/ /, '\\+');
+                    var regex = new RegExp(match, 'gi');
+                    var newurl = (url.replace(regex, ''));
+                    window.history.pushState('', '', newurl);
+                }
+            },
+
             populateSearchBar = function(){
+                var results = Config.get();
                 var query = searchHelper.getUrlQuery();
-                if (query){
-                    $('#ctl00_searchtext').val(query.replace(/\+/g, ' ').replace(/\*/g, ''));
+                if(results['limitRefinementsTo']){
+                    // When user passes in a format with query, this adds the formats back in
+                    var breadcrumbs = $('.breadcrumb').find('h2')
+                    var formats = ""
+                    for (var t = 0; t < breadcrumbs.length; t++){
+                        formats += $(breadcrumbs[t]).html() + " "
+                    }
+                    $('#ctl00_searchtext').val(decodeURIComponent(query.replace(/\+/g, ' ').replace(/\*/g, ''))+ " " + formats);
+                } else {
+                    if (query){
+                        $('#ctl00_searchtext').val(decodeURIComponent(query.replace(/\+/g, ' ').replace(/\*/g, '')));
+                    }
                 }
             },
 
@@ -111,11 +129,11 @@ var Config = require('modules/Config'),
                 var searchQuery = searchHelper.getUrlQuery();
                 if (domRefinements){
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'refinements': domRefinements,
@@ -125,7 +143,7 @@ var Config = require('modules/Config'),
                         },
                         success: function(data){
                             if (e){
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 } else {
@@ -149,11 +167,11 @@ var Config = require('modules/Config'),
                 } else {
 
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'pruneRefinements': false,
@@ -162,7 +180,7 @@ var Config = require('modules/Config'),
                         },
                         success: function(data){
                             if (e){
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 } else {
@@ -187,15 +205,14 @@ var Config = require('modules/Config'),
 
             moreRefinements = function(){
                 $el.find('.nav_show_more').click(function(e){
-                    console.log("******")
                     refinements = searchHelper.domRefinements(e);
                     var searchQuery = searchHelper.getUrlQuery();
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php?more_ref=1',
+                        url: 'https://services.wwnorton.com/search/search.php?more_ref=1',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'navigationName': $(e.currentTarget).parent().siblings('.category_level').text(),
                             'query': searchQuery,
                             'refinements': refinements
@@ -221,11 +238,11 @@ var Config = require('modules/Config'),
 
                     if (refinements && sort[1] !== ''){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -247,7 +264,7 @@ var Config = require('modules/Config'),
                                     returnedData = JSON.parse(data);
                                 }
                                 contentToFilter.showFiltered(returnedData.data);
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 } 
@@ -260,11 +277,11 @@ var Config = require('modules/Config'),
                         });
                     } else if (sort[1] !== ''){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -285,7 +302,7 @@ var Config = require('modules/Config'),
                                     returnedData = JSON.parse(data);
                                 }
                                 contentToFilter.showFiltered(returnedData.data);
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 } 
@@ -297,11 +314,11 @@ var Config = require('modules/Config'),
                         });
                     } else if (refinements){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'refinements': refinements,
@@ -319,7 +336,7 @@ var Config = require('modules/Config'),
                                     returnedData = JSON.parse(data);
                                 }
                                 contentToFilter.showFiltered(returnedData.data);
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 } 
@@ -331,11 +348,11 @@ var Config = require('modules/Config'),
                         });
                     } else {
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'pruneRefinements': false,
@@ -353,7 +370,7 @@ var Config = require('modules/Config'),
                                 }
                                 // returnedData.data['records'].push(JSON.parse(data).data);
                                 contentToFilter.showFiltered(returnedData.data);
-                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories') || $(e.currentTarget).parent().hasClass('breadcrumb')){
+                                if ($(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().indexOf('categories') !== -1 || $(e.currentTarget).parent().hasClass('breadcrumb')){
                                     //update Nav
                                     rerenderNav(JSON.parse(data).data);
                                 }
@@ -376,11 +393,11 @@ var Config = require('modules/Config'),
                     var oldData = returnedData;
                     if (refinements && sort[1] !== ''){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -419,11 +436,11 @@ var Config = require('modules/Config'),
                         });
                     } else if (sort[1] !== ''){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'sort': {
@@ -458,11 +475,11 @@ var Config = require('modules/Config'),
                         });
                     } else if (refinements){
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'refinements': refinements,
@@ -497,11 +514,11 @@ var Config = require('modules/Config'),
                         });
                     } else {
                         $.ajax({
-                            url: '//stg-services.wwnorton.com/search/search.php',
+                            url: 'https://services.wwnorton.com/search/search.php',
                             method: 'POST',
                             data: {
-                                'collection': 'dummyDevTwo',
-                                'area': 'dummyDevTwo',
+                                'collection': 'bookSearchProduction',
+                                'area': 'bookSearchProductionGBTuning',
                                 'query': searchQuery,
                                 'fields': ['*'],
                                 'pruneRefinements': false,
@@ -545,11 +562,11 @@ var Config = require('modules/Config'),
                 var sort = searchHelper.getSort();
                 if (refinements && sort[1] !== ''){
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'sort': {
@@ -587,11 +604,11 @@ var Config = require('modules/Config'),
                     });
                 } else if (sort[1] !== ''){
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'sort': {
@@ -625,11 +642,11 @@ var Config = require('modules/Config'),
                     });
                 } else if (refinements){
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'refinements': refinements,
@@ -662,11 +679,11 @@ var Config = require('modules/Config'),
                     });
                 } else {
                     $.ajax({
-                        url: '//stg-services.wwnorton.com/search/search.php',
+                        url: 'https://services.wwnorton.com/search/search.php',
                         method: 'POST',
                         data: {
-                            'collection': 'dummyDevTwo',
-                            'area': 'dummyDevTwo',
+                            'collection': 'bookSearchProduction',
+                            'area': 'bookSearchProductionGBTuning',
                             'query': searchQuery,
                             'fields': ['*'],
                             'pruneRefinements': false,
@@ -723,10 +740,29 @@ var Config = require('modules/Config'),
                 clickBreadcrumb();
             },
 
+            buildBreadcrumbFromReturnedData = function(refinements){
+                $('.breadcrumbs').empty();
+                var breadcrumbs = [];
+                for (var g = 0; g < refinements.length; g++){
+                    breadcrumbs.push({'name': refinements[g]['navigationName'], 'value' : refinements[g]['value']});
+                }
+                for (var h = 0; h < breadcrumbs.length; h++){
+                    $('.breadcrumbs').append('<div name='+breadcrumbs[h].name+' class="breadcrumb">&nbsp<h2>' + breadcrumbs[h].value + '</h2>&nbsp<p class="crumb_x">x</p><p class="crumb">></p></div>'); 
+                }
+                configureBreadcrumbs();
+                if (breadcrumbs.length === 1){
+                    xBreadcrumb();
+                }
+                clickBreadcrumb();
+                checkboxState(refinements);
+            },
+
             xBreadcrumb = function (){
                 $('p.crumb_x').click(function (){
-                    $('.search_container').trigger('clearBreadcrumbs');
+                    // $('.search_container').trigger('clearBreadcrumbs');
                     $('.breadcrumbs').empty();
+                    // window.location.reload(true);
+                    populateSubCategories();
                 });
             },
 
@@ -789,7 +825,7 @@ var Config = require('modules/Config'),
             },
 
             collapseCategory = function(){
-                $el.find('.chevron, .nav_heading').off('click')
+                $el.find('.chevron, .nav_heading').off('click');
                 $el.find('.chevron, .nav_heading').click(function (e) {
                     //hide content on click
                     $(e.currentTarget).siblings('.filters_checkboxes').toggleClass('collapsed').slideToggle('fast');
@@ -845,7 +881,11 @@ var Config = require('modules/Config'),
             },
 
             checkboxState = function(data){
-                var refinements = JSON.parse(data);
+                if (typeof data === 'string'){
+                    var refinements = JSON.parse(data);
+                } else {
+                    var refinements = data;
+                }
                 for (var t = 0; t < refinements.length; t++){
                     $('.category-text').each(function(){
                         if ($(this).text() === refinements[t].value){
@@ -896,8 +936,7 @@ var Config = require('modules/Config'),
                 return [];
             },
 
-            reFilter = function(data){
-
+            reFilter = function(data, limitRefinements){
                 var filters = [];
                 for (var b = 0; b < data.length; b++){
 
@@ -916,7 +955,22 @@ var Config = require('modules/Config'),
                             } 
                         }
                         if (data[b]['refinements'].length !== 0){
-                            filters.push(data[b]);
+                            if (limitRefinements && Object.keys(limitRefinements)[0] === data[b]['name']){
+                                // This is only if a user passes in a format within the query
+                                var length = data[b]['refinements'].length;
+                                var newRefinements = [];
+                                for (var x = 0; x < length; x++ ){
+                                    for (var f = 0; f < limitRefinements[data[b]['name']].length; f++){
+                                        if (data[b]['refinements'][x]['value'] == limitRefinements[data[b]['name']][f]){
+                                            newRefinements.push(data[b]['refinements'][x]);
+                                        }
+                                    }
+                                }
+                                data[b]['refinements'] = newRefinements;
+                                filters.push(data[b]);
+                            } else {
+                                filters.push(data[b]);
+                            }
                         }
                     }
                 }
@@ -957,13 +1011,12 @@ var Config = require('modules/Config'),
                 // SEARCH FOR DOM ELEMENT BY 'name' property and update that
                 if (data.navigation){
                     // Show more categories
-                    var that
+                    var that;
                     $('.filter_group').each(function(){
                         if ($(this).find('.category_level').text() === data.navigation.name){
-                            console.log("Yep", [data.navigation], $(this).find('.category_level').text())
                             that = $(this);
                             // $(e.currentTarget).closest('.filters_checkboxes').siblings('.category_level').text().includes('categories')
-                            if ($(this).find('.category_level').text().includes('categories')){
+                            if ($(this).find('.category_level').text().indexOf('categories') !== -1){
                                 $(this).empty().append(template({
                                     'categories': googleHelper.getGoogleData(reCategories(data.navigation))
                                 }));
@@ -983,23 +1036,18 @@ var Config = require('modules/Config'),
                         that.find('.nav_heading').trigger('click');  
                     }
                 } else {
-                    if ($('div.categories').find('.category_level').text() === data.availableNavigation[0]['name'] && data.availableNavigation[0]['name'] !== 'categories.categories.categories.value'){
+                    if ($('div.categories').find('.category_level').text() === data.availableNavigation[0]['name'] && data.availableNavigation[0]['name'] !== 'categories.categories.categories.value' && data.availableNavigation[0]['name'] !== 'categories.categories.value'){
                         // When you hit the end of the category specificity, stop rendering same subcategory
                         $('.filters_nav').empty().append(template({
                             categories: [],
                             filters: googleHelper.getGoogleFilterData(reFilter(data.availableNavigation)),
                             resources: googleHelper.getGoogleResourceData(getResources(data.availableNavigation))
                         }));
-                    } else if (data.availableNavigation[0]['name'] !== 'categories.categories.value'){
+                    } else {
                         $('.filters_nav').empty().append(template({
                             categories: googleHelper.getGoogleData(reCategories(data.availableNavigation[0])),
                             filters: googleHelper.getGoogleFilterData(reFilter(data.availableNavigation)),
                             resources: googleHelper.getGoogleResourceData(getResources(data.availableNavigation))
-                        }));
-                    } else {
-                        $('.filters_nav').empty().append(template({
-                            categories: googleHelper.getGoogleData(reCategories(data.availableNavigation[0])),
-                            filters: googleHelper.getGoogleFilterData(reFilter(data.availableNavigation))
                         }));
                     }
                     updatePage(data);
@@ -1012,20 +1060,33 @@ var Config = require('modules/Config'),
             initrender = function () {
                 var context = Config.get(CONTEXT);
                 $el.empty();
-                if (initCategories(context).name && initFilters(context).length){
+                if (!Config.get()['limitRefinementsTo']){
+                    if (initCategories(context).name && initFilters(context).length){
+                        $el.append(template({
+                            categories: googleHelper.getGoogleData(initCategories(context)),
+                            filters: googleHelper.getGoogleFilterData(reFilter(context)),
+                            resources: googleHelper.getGoogleResourceData(getResources(context))
+                        }));
+                    } else if (initCategories(context).name){
+                        $el.append(template({
+                            categories: googleHelper.getGoogleData(initCategories(context))
+                        }));
+                    } else if (initFilters(context).length){
+                        $el.append(template({
+                            filters: googleHelper.getGoogleFilterData(reFilter(context))
+                        }));
+                    }
+                } else {
+                    // If limit Refinements to is present
+                    var navData = Config.get();
                     $el.append(template({
                         categories: googleHelper.getGoogleData(initCategories(context)),
-                        filters: googleHelper.getGoogleFilterData(reFilter(context)),
+                        filters: googleHelper.getGoogleFilterData(reFilter(context, navData['limitRefinementsTo'])),
                         resources: googleHelper.getGoogleResourceData(getResources(context))
                     }));
-                } else if (initCategories(context).name){
-                    $el.append(template({
-                        categories: googleHelper.getGoogleData(initCategories(context))
-                    }));
-                } else if (initFilters(context).length){
-                    $el.append(template({
-                        filters: googleHelper.getGoogleFilterData(reFilter(context))
-                    }));
+                    buildBreadcrumbFromReturnedData(navData['selectedNavigation'][0]['refinements']);
+                    removeFormatFromUrl(navData['limitRefinementsTo']['variants.product_form']);
+                    filterCheckBox();
                 }
             };
 

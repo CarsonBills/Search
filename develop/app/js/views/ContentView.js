@@ -13,13 +13,14 @@ var Config = require('modules/Config'),
             truncateString = function(data, array){
                 for (var i = 0; i < array.length; i++){
                     $(data).each(function () {
-                        if(this[array[i][0]].length > array[i][1]){
+                        if(this['allMeta'][array[i][0]].length > array[i][1]){
                             //  cuts off string at specified length and finds last space just before the cut.
-                            var text = this[array[i][0]].substr(0, this[array[i][0]].substr(0, array[i][1]).lastIndexOf(' ')) + '...';
-                            this[array[i][0]] = text;
+                            var text = this['allMeta'][array[i][0]].substr(0, this['allMeta'][array[i][0]].substr(0, array[i][1]).lastIndexOf(' ')) + '...';
+                            this['allMeta'][array[i][0]] = text;
                         }    
                     });
                 }
+                return data
             },
 
             showFiltered = function (target) {
@@ -42,14 +43,23 @@ var Config = require('modules/Config'),
 
             scrapePrice = function(data){
                 for (var q = 0; q < data['records'].length; q++){
-                    if (data['records'][q]['allMeta']['lowest_price']  && data['records'][q]['allMeta']['lowest_price'].includes(' ')) {
+                    if (data['records'][q]['allMeta']['lowest_price']  && data['records'][q]['allMeta']['lowest_price'].indexOf(' ') !== -1 ) {
                         data['records'][q]['allMeta']['lowest_price'] = data['records'][q]['allMeta']['lowest_price'].split(' ')[1]; 
                     }
-                    if (!data['records'][q]['allMeta']['lowest_price'].includes('.')){
+                    if (data['records'][q]['allMeta']['lowest_price'].indexOf('.') === -1){
                         data['records'][q]['allMeta']['lowest_price'] = data['records'][q]['allMeta']['lowest_price']+'.00';
                     }
                 }
                 return data;
+            },
+
+            sortRecordVariants = function(data){
+                for (var x = 0; x < data.length; x++){
+                    data[x]['allMeta']['variants'] = data[x]['allMeta']['variants'].sort(function(a, b){
+                        return parseFloat(a.us_list_price) - parseFloat(b.us_list_price);
+                    });   
+                }
+                return data
             },
 
             processResults = function(data){
@@ -71,7 +81,8 @@ var Config = require('modules/Config'),
                 } else if (context === 'reset'){
                     context = Config.reset();
                 }
-                // truncateString(context, [['description', 160],['title', 45]]);
+                context.records = truncateString(context.records, [['s_str_summary_text', 250]]);
+                context.records = sortRecordVariants(context.records);
                 var breadcrumbs = $el.find('.breadcrumbs').html();
                 $el.empty();
                 $el.append(template({
